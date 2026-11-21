@@ -1,9 +1,11 @@
-name: Code App PR
+name: Code App build
 
 on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
+  push:
+    tags: ['v*']
 
 permissions:
   contents: read
@@ -28,10 +30,21 @@ jobs:
         env:
           VITE_DATA_SOURCE: api
       - name: Save build for solution packaging
-        if: github.event.pull_request.head.repo.id == github.event.repository.id
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.id == github.event.repository.id
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: code-app-build-${{ github.run_id }}-${{ github.run_attempt }}
           path: dist/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Record the release tag
+        if: github.event_name == 'push'
+        run: printf '%s\n' "$GITHUB_REF_NAME" > "$RUNNER_TEMP/code-app-release-tag.txt"
+      - name: Save the release tag for the trusted export workflow
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: code-app-release-tag-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/code-app-release-tag.txt
           if-no-files-found: error
           retention-days: 7
