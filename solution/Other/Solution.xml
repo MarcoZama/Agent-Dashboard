@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.2.26104.153" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26104.153" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26104.00153">
+  <SolutionManifest>
+    <UniqueName>AgentsDashboard</UniqueName>
+    <LocalizedNames>
+      <LocalizedName description="Agents Dashboard" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Agents Dashboard code app. The Copilot Studio and M365 custom connectors are maintained separately." languagecode="1033" />
+    </Descriptions>
+    <Version>1.0.0.0</Version>
+    <Managed>1</Managed>
+    <Publisher>
+      <UniqueName>Zama</UniqueName>
+      <LocalizedNames>
+        <LocalizedName description="Zama" languagecode="1033" />
+      </LocalizedNames>
+      <Descriptions />
+      <EMailAddress xsi:nil="true" />
+      <SupportingWebsiteUrl xsi:nil="true" />
+      <CustomizationPrefix>zama</CustomizationPrefix>
+      <CustomizationOptionValuePrefix>56107</CustomizationOptionValuePrefix>
+      <Addresses>
+        <Address>
+          <AddressNumber>1</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <ShippingMethodCode>1</ShippingMethodCode>
+        </Address>
+        <Address>
+          <AddressNumber>2</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <ShippingMethodCode>1</ShippingMethodCode>
+        </Address>
+      </Addresses>
+    </Publisher>
+    <RootComponents>
+      <RootComponent type="300" schemaName="zama_agentsdashboard_0cf17" behavior="0" />
+    </RootComponents>
+    <MissingDependencies>
+      <MissingDependency>
+        <Required type="372" schemaName="zama_copilotcostmanagement" displayName="CopilotCostManagement" solution="Active" id="{5f4c31d6-a792-4f25-9ad4-c44fa178cbb2}" />
+        <Dependent type="300" schemaName="zama_agentsdashboard_0cf17" displayName="Agents Dashboard" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="372" schemaName="zama_copilotstudiocreditconsumption" displayName="CopilotStudioCreditConsumption" solution="Active" id="{ff1c0cc0-22c6-4659-b7cd-ae04188a96eb}" />
+        <Dependent type="300" schemaName="zama_agentsdashboard_0cf17" displayName="Agents Dashboard" />
+      </MissingDependency>
+    </MissingDependencies>
+  </SolutionManifest>
+</ImportExportXml>

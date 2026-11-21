@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CanvasApp xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>zama_agentsdashboard_0cf17</Name>
+  <AppVersion>2026-11-21T17:05:54Z</AppVersion>
+  <Status>Ready</Status>
+  <CreatedByClientVersion>0.0.0.0</CreatedByClientVersion>
+  <MinClientVersion>0.0.0.0</MinClientVersion>
+  <Tags>{}</Tags>
+  <IsCdsUpgraded>0</IsCdsUpgraded>
+  <GalleryItemId xsi:nil="true" />
+  <BackgroundColor>RGBA(255,255,255,1)</BackgroundColor>
+  <DisplayName>Agents Dashboard</DisplayName>
+  <Description>Agent inventory, Copilot Credits consumption and cost governance dashboard</Description>
+  <CommitMessage xsi:nil="true" />
+  <Publisher xsi:nil="true" />
+  <AuthorizationReferences>[]</AuthorizationReferences>
+  <ConnectionReferences>{}</ConnectionReferences>
+  <DatabaseReferences>{}</DatabaseReferences>
+  <AppComponents>[]</AppComponents>
+  <AppComponentDependencies>[]</AppComponentDependencies>
+  <CanConsumeAppPass>1</CanConsumeAppPass>
+  <CanvasAppType>4</CanvasAppType>
+  <BypassConsent>0</BypassConsent>
+  <AdminControlBypassConsent>0</AdminControlBypassConsent>
+  <EmbeddedApp xsi:nil="true" />
+  <IntroducedVersion>1.0</IntroducedVersion>
+  <CdsDependencies>{"cdsdependencies":[{"logicalname":"zama_copilotstudiocreditconsumption","componenttype":372,"componenttypeplatformname":"connector"},{"logicalname":"zama_copilotcostmanagement","componenttype":372,"componenttypeplatformname":"connector"}]}</CdsDependencies>
+  <IsCustomizable>1</IsCustomizable>
+  <CodeAppPackageUris />
+</CanvasApp>
