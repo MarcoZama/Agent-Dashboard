@@ -15,7 +15,8 @@ $configPath = Join-Path $repoRoot 'power.config.json'
 $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json -AsHashtable
 $dist = (Resolve-Path -LiteralPath $BuildDirectory).Path
 $output = [IO.Path]::GetFullPath($SolutionZip, (Get-Location).ProviderPath)
-if ($config.buildEntryPoint -cne 'index.html' -or !(Test-Path -LiteralPath (Join-Path $dist 'index.html') -PathType Leaf)) {
+$entryPoint = Join-Path $dist 'index.html'
+if ($config.buildEntryPoint -cne 'index.html' -or !(Test-Path -LiteralPath $entryPoint -PathType Leaf)) {
     throw 'The Code App build must contain its configured index.html entry point.'
 }
 if ([IO.Path]::GetExtension($output) -ne '.zip' -or (Test-Path -LiteralPath $output)) {
@@ -31,7 +32,8 @@ $mime = @{
     '.svg' = 'image/svg+xml'; '.png' = 'image/png'; '.jpg' = 'image/jpeg'; '.jpeg' = 'image/jpeg'
     '.webp' = 'image/webp'; '.ico' = 'image/x-icon'; '.woff2' = 'font/woff2'
 }
-$files = @($entries | Where-Object { !$_.PSIsContainer } | Sort-Object FullName)
+# Power Apps uses the first package URI as the entry point after import.
+$files = @($entries | Where-Object { !$_.PSIsContainer } | Sort-Object { $_.FullName -cne $entryPoint }, FullName)
 $stage = [IO.Directory]::CreateTempSubdirectory('agents-dashboard-pack-').FullName
 try {
     $solutionPath = Join-Path $stage 'solution'
@@ -87,9 +89,6 @@ try {
     New-Item -ItemType Directory -Path $configDir | Out-Null
     Copy-Item -LiteralPath $configPath -Destination (Join-Path $configDir 'power.config.json')
     $uris = $metadata.CanvasApp.SelectSingleNode('CodeAppPackageUris')
-    $configUri = $metadata.CreateElement('CodeAppPackageUri')
-    $configUri.InnerText = "/CanvasApps/$packageFolder/.pa/power.config.json_ContentType_application/json"
-    $null = $uris.AppendChild($configUri)
     foreach ($file in $files) {
         $relative = [IO.Path]::GetRelativePath($dist, $file.FullName)
         $uri = $relative.Replace('\', '/')
@@ -104,6 +103,9 @@ try {
         $node.InnerText = "/CanvasApps/$packageFolder/${uri}_ContentType_$type"
         $null = $uris.AppendChild($node)
     }
+    $configUri = $metadata.CreateElement('CodeAppPackageUri')
+    $configUri.InnerText = "/CanvasApps/$packageFolder/.pa/power.config.json_ContentType_application/json"
+    $null = $uris.AppendChild($configUri)
     $metadata.Save($metadataPath)
 
     $zip = Join-Path $stage 'AgentsDashboard_managed.zip'

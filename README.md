@@ -72,7 +72,9 @@ For a **GitHub Release**, push a tag `vX.Y.Z` on a commit already on `main`. The
 
 Packaging uses PAC CLI on a GitHub-hosted Windows runner. It does not connect to Dataverse, require Power Platform credentials or a sandbox, or deploy the app. The [packaging script](./scripts/Pack-CodeAppSolution.ps1) rebuilds the Code App asset list from the current bundle; the metadata preserves the solution publisher, app identity, and custom connector dependencies from the original managed solution.
 
-For an import trial, first install both connector solutions in the destination Dataverse environment and bind the destination connections. Restrict creation and updates of `v*` tags to release maintainers, and verify imports before distributing the resulting package.
+Before distributing a release, install both connector solutions in the test Dataverse environment, import the managed ZIP, and bind the destination connections. Open the imported app from that environment's Apps list and verify that it renders and loads data. A successful import alone does not verify startup. Restrict creation and updates of `v*` tags to release maintainers.
+
+Do not deploy `v1.0.0`: its package lists the config before `index.html`, which can cause `AppBlobNotFound` after a successful import. The package check now requires `index.html` to be the first URI.
 
 ## Data interpretation and troubleshooting
 
