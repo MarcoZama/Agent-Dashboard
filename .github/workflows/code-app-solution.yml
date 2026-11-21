@@ -2,7 +2,7 @@ name: Code App managed solution
 
 on:
   workflow_run:
-    workflows: [Code App PR]
+    workflows: [Code App build]
     types: [completed]
 
 permissions:
@@ -13,7 +13,7 @@ jobs:
   export:
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.event == 'pull_request' &&
+      (github.event.workflow_run.event == 'pull_request' || github.event.workflow_run.event == 'push') &&
       github.event.workflow_run.head_repository.id == github.event.repository.id
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -27,12 +27,43 @@ jobs:
     env:
       PACKAGE_ROOT: ${{ github.workspace }}/.ci-package
       SOLUTION_NAME: AgentsDashboard
+    outputs:
+      release_tag: ${{ steps.release.outputs.tag }}
+      release_commit: ${{ steps.release.outputs.commit }}
     steps:
       # workflow_run checks out the default branch, not the PR. The artifact is never executed here.
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ github.sha }}
+          fetch-depth: ${{ github.event.workflow_run.event == 'push' && '0' || '1' }}
           persist-credentials: false
+      - name: Download the upstream release tag
+        if: github.event.workflow_run.event == 'push'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: code-app-release-tag-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+          path: ${{ runner.temp }}/code-app-release
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Verify the release tag and its ancestry on main
+        id: release
+        if: github.event.workflow_run.event == 'push'
+        env:
+          BUILD_COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          $tagPath = Join-Path $env:RUNNER_TEMP 'code-app-release/code-app-release-tag.txt'
+          $tag = (Get-Content -Raw -LiteralPath $tagPath).Trim()
+          if ($tag -cnotmatch '^v(0|[1-9][0-9]{0,4})\.(0|[1-9][0-9]{0,4})\.(0|[1-9][0-9]{0,4})$') {
+            throw 'Expected a release tag in the form vX.Y.Z.'
+          }
+          $version = '{0}.{1}.{2}.0' -f [uint16]$Matches[1], [uint16]$Matches[2], [uint16]$Matches[3]
+          $commit = git --no-pager rev-parse --verify "refs/tags/${tag}^{commit}"
+          if ($LASTEXITCODE -ne 0 -or $commit -cne $env:BUILD_COMMIT) {
+            throw 'The release tag does not point to the commit built by the upstream workflow.'
+          }
+          git --no-pager merge-base --is-ancestor $commit refs/remotes/origin/main
+          if ($LASTEXITCODE -ne 0) { throw 'The tagged commit must be on main.' }
+          Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value @("tag=$tag", "commit=$commit", "version=$version")
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '24'
@@ -49,7 +80,7 @@ jobs:
           npm install --prefix $paPath --no-save --no-audit --no-fund '@microsoft/power-apps-cli@1.4.2'
           if ($LASTEXITCODE -ne 0) { throw 'Power Apps CLI installation failed.' }
           Add-Content -LiteralPath $env:GITHUB_PATH -Value (Join-Path $paPath 'node_modules/.bin')
-      - name: Download build from the successful PR run
+      - name: Download build from the successful upstream run
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: code-app-build-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
@@ -61,6 +92,7 @@ jobs:
           PP_CI_POWER_CONFIG: ${{ vars.PP_CI_POWER_CONFIG }}
           PP_CI_ENVIRONMENT_ID: ${{ vars.PP_CI_ENVIRONMENT_ID }}
           PP_CI_SOLUTION_ID: ${{ vars.PP_CI_SOLUTION_ID }}
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           $guid = '^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$'
           $currentTestEnvironment = '90d9d59b-8118-e2c8-9726-1899715d4443'
@@ -79,14 +111,17 @@ jobs:
           }
           $dist = Join-Path $env:PACKAGE_ROOT 'dist'
           if (!(Test-Path -LiteralPath (Join-Path $dist 'index.html') -PathType Leaf)) {
-            throw 'PR build is missing dist/index.html.'
+            throw 'The build is missing dist/index.html.'
           }
           $entries = @(Get-ChildItem -LiteralPath $dist -Recurse -Force)
           if ($entries | Where-Object { $_.Name.StartsWith('.') -or ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) }) {
-            throw 'PR build cannot contain hidden paths or links.'
+            throw 'The build cannot contain hidden paths or links.'
           }
           $config | ConvertTo-Json -Depth 32 | Set-Content -LiteralPath (Join-Path $env:PACKAGE_ROOT 'power.config.json') -Encoding utf8NoBOM
-          $version = '1.0.{0}.{1}' -f [uint16]$env:GITHUB_RUN_NUMBER, [uint16]$env:GITHUB_RUN_ATTEMPT
+          $version = $env:RELEASE_VERSION
+          if (!$version) {
+            $version = '1.0.{0}.{1}' -f [uint16]$env:GITHUB_RUN_NUMBER, [uint16]$env:GITHUB_RUN_ATTEMPT
+          }
           Add-Content -LiteralPath $env:GITHUB_ENV -Value "SOLUTION_VERSION=$version"
       - name: Publish and export only in the packaging sandbox
         working-directory: ${{ env.PACKAGE_ROOT }}
@@ -119,7 +154,7 @@ jobs:
           $zipPath = Join-Path $env:PACKAGE_ROOT 'AgentsDashboard_managed.zip'
           pac solution export --environment $env:PA_CLI_ENVIRONMENT_ID --name $env:SOLUTION_NAME --path $zipPath --managed --async --max-async-wait-time 20
           if ($LASTEXITCODE -ne 0) { throw 'Managed solution export failed.' }
-      - name: Verify the managed ZIP contains this PR build
+      - name: Verify the managed ZIP contains the upstream build
         run: |
           ./scripts/Test-CodeAppSolution.ps1 `
             -SolutionZip (Join-Path $env:PACKAGE_ROOT 'AgentsDashboard_managed.zip') `
@@ -131,3 +166,39 @@ jobs:
           path: ${{ env.PACKAGE_ROOT }}/AgentsDashboard_managed.zip
           if-no-files-found: error
           retention-days: 14
+
+  release:
+    needs: export
+    if: needs.export.outputs.release_tag != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download the verified managed solution
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: AgentsDashboard-managed-${{ github.event.workflow_run.id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/managed-solution
+      - name: Publish the verified ZIP to GitHub Releases
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.export.outputs.release_tag }}
+          RELEASE_COMMIT: ${{ needs.export.outputs.release_commit }}
+        run: |
+          $tag = $env:RELEASE_TAG
+          $ref = "refs/tags/$tag"
+          $refs = @(git --no-pager ls-remote "${env:GITHUB_SERVER_URL}/${env:GITHUB_REPOSITORY}.git" $ref "${ref}^{}")
+          if ($LASTEXITCODE -ne 0) { throw 'Could not confirm the release tag.' }
+          $target = $refs | Where-Object { ($_ -split "`t", 2)[1] -ceq "${ref}^{}" } | Select-Object -First 1
+          if (!$target) {
+            $target = $refs | Where-Object { ($_ -split "`t", 2)[1] -ceq $ref } | Select-Object -First 1
+          }
+          if (!$target -or ($target -split "`t", 2)[0] -cne $env:RELEASE_COMMIT) {
+            throw 'The release tag no longer points to the commit that produced the managed solution.'
+          }
+          $asset = Join-Path $env:RUNNER_TEMP 'managed-solution/AgentsDashboard_managed.zip'
+          if (!(Test-Path -LiteralPath $asset -PathType Leaf)) { throw 'The verified ZIP is missing.' }
+          gh release create $tag $asset --repo $env:GITHUB_REPOSITORY --verify-tag --title "Agents Dashboard $tag" --generate-notes
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub Release creation failed.' }
