@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "appId": "8f271373-291e-4a17-86ca-6f0013d03480",
+  "appDisplayName": "Agents Dashboard",
+  "region": "prod",
+  "environmentId": "90d9d59b-8118-e2c8-9726-1899715d4443",
+  "description": "Agent inventory, Copilot Credits consumption and cost governance dashboard",
+  "buildPath": "dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:5173",
+  "logoPath": "Default",
+  "connectionReferences": {
+    "8cd9b373-7ccf-4b7d-a535-793a51635756": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320",
+      "displayName": "CopilotStudioCreditConsumption",
+      "dataSources": [
+        "zama_5fcopilotstudiocreditconsumption_5fb043a1f4407b1320"
+      ],
+      "dataSets": {}
+    },
+    "846382d8-bb0a-4b41-8627-a167bd99cfe1": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_zama-5fcopilotcostmanagement-5fb043a1f4407b1320",
+      "displayName": "CopilotCostManagement",
+      "dataSources": [
+        "zama_5fcopilotcostmanagement_5fb043a1f4407b1320"
+      ],
+      "dataSets": {}
+    },
+    "db5371e3-2bda-4732-b953-0125944a1b8e": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_powerplatformadminv2",
+      "displayName": "Power Platform for Admins V2",
+      "dataSources": [
+        "powerplatformadminv2"
+      ],
+      "authenticationType": "oauth2-auth",
+      "dataSets": {}
+    },
+    "aacf3330-dfcf-413c-b180-5d4cc22cc131": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_office365users",
+      "displayName": "Office 365 Users",
+      "dataSources": [
+        "office365users"
+      ],
+      "dataSets": {}
+    }
+  },
+  "databaseReferences": {}
+}

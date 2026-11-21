@@ -1,0 +1,49 @@
+{
+  "paths": {
+    "/copilot/costManagement/usageReports/serviceUsageRecords/cowork": {
+      "get": {
+        "operationId": "GetCoworkDailyUsage",
+        "summary": "Get daily Copilot Cowork credits (preview)",
+        "description": "Reads tenant-wide Copilot Cowork consumption for exactly one completed UTC day.",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "Inclusive UTC day (YYYY-MM-DD)."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "Exclusive UTC end date, one day after startDate."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Copilot Credits reported for Cowork for the day.",
+            "schema": {
+              "type": "object",
+              "required": ["serviceId", "consumedQuantity", "unit"],
+              "properties": {
+                "serviceId": { "type": "string" },
+                "consumedQuantity": { "type": "number", "format": "double" },
+                "unit": { "type": "string" }
+              }
+            }
+          },
+          "404": {
+            "description": "No usage is represented for Cowork on this day.",
+            "schema": { "$ref": "#/definitions/ODataError" }
+          },
+          "default": {
+            "description": "Microsoft Graph error.",
+            "schema": { "$ref": "#/definitions/ODataError" }
+          }
+        }
+      }
+    }
+  }
+}

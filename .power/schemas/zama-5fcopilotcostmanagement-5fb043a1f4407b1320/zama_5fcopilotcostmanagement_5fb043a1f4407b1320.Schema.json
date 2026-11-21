@@ -1,0 +1,2172 @@
+{
+  "name": "shared_zama-5fcopilotcostmanagement-5fb043a1f4407b1320",
+  "id": "/providers/Microsoft.PowerApps/apis/shared_zama-5fcopilotcostmanagement-5fb043a1f4407b1320",
+  "type": "Microsoft.PowerApps/apis",
+  "properties": {
+    "xrmConnectorId": "5f4c31d6-a792-4f25-9ad4-c44fa178cbb2",
+    "displayName": "CopilotCostManagement",
+    "iconUri": "https://pafeblobprodam.blob.core.windows.net/20261121t000000zb264b55c19034cfdba2ae20cf4d2bc65/zama_copilotcostmanagement_iconblob.Png?skoid=1b4c3c9e-b403-4e0f-9933-e50756645683&sktid=975f013f-7f24-47e8-a7d3-abc4752bf346&skt=2026-11-21T14%3A00%3A00Z&ske=2026-11-28T14%3A00%3A00Z&sks=b&skv=2025-07-05&sv=2025-07-05&spr=https&st=2026-11-21T14%3A13%3A13Z&se=2026-11-26T20%3A00%3A00Z&sr=c&sp=rl&scid=8b1b907f-714d-4466-8060-af385ba411bc&sig=DmpAPZX6s6PvZojDPuFjtJAVDZ23%2FgdnTyI7rIweySM%3D",
+    "iconBrandColor": "#007ee5",
+    "contact": {},
+    "license": {},
+    "apiEnvironment": "Shared",
+    "isCustomApi": true,
+    "blobUrisAreProxied": false,
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "identityProvider": "aad",
+          "clientId": "a519e3f2-4c52-4ee8-a6d3-662ed72f3a62",
+          "scopes": [],
+          "redirectMode": "GlobalPerConnector",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect/zama-5fcopilotcostmanagement-5fb043a1f4407b1320",
+          "properties": {
+            "IsFirstParty": "False",
+            "AzureActiveDirectoryResourceId": "https://graph.microsoft.com",
+            "IsOnbehalfofLoginSupported": true
+          },
+          "customParameters": {
+            "LoginUri": {
+              "value": "https://login.microsoftonline.com"
+            },
+            "TenantId": {
+              "value": "common"
+            },
+            "ResourceUri": {
+              "value": "https://graph.microsoft.com"
+            },
+            "EnableOnbehalfOfLogin": {
+              "value": "false"
+            }
+          }
+        },
+        "uiDefinition": {
+          "displayName": "OAuth Connection",
+          "description": "OAuth Connection",
+          "constraints": {
+            "required": "true",
+            "hidden": "false"
+          }
+        }
+      },
+      "token:TenantId": {
+        "type": "string",
+        "metadata": {
+          "sourceType": "AzureActiveDirectoryTenant"
+        },
+        "uiDefinition": {
+          "constraints": {
+            "required": "false",
+            "hidden": "true"
+          }
+        }
+      }
+    },
+    "swagger": {
+      "swagger": "2.0",
+      "info": {
+        "title": "Copilot Cost Management",
+        "description": "Microsoft 365 Copilot Cost Management API (Microsoft Graph beta). Read the tenant Copilot Credits balance, per-user and per-service consumption, and manage spending policies, governed services, threshold alerts and alert recipients.",
+        "version": "1.0.0",
+        "contact": {
+          "name": "Microsoft Graph - Copilot Cost Management",
+          "url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/api/admin-settings/cost-management/overview"
+        }
+      },
+      "host": "90d9d59b8118e2c897261899715d44.43.environment.api.powerplatform.com",
+      "basePath": "/connectors/runtime/invoke/scalegroups/europe002/shards/05/apis/zama-5fcopilotcostmanagement-5fb043a1f4407b1320/connections/",
+      "schemes": [
+        "https",
+        "http"
+      ],
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "paths": {
+        "/{connectionId}/copilot/costManagement/getTenantCreditBalance": {
+          "get": {
+            "tags": [
+              "Tenant balance"
+            ],
+            "operationId": "GetTenantCreditBalance",
+            "summary": "Get tenant credit balance",
+            "description": "Returns the tenant-wide Copilot Credits balance snapshot: purchased, consumed and remaining credits, one row per billing method (prepaid credits, pay-as-you-go). Values are in Copilot Credits, not currency.",
+            "x-ms-visibility": "important",
+            "responses": {
+              "200": {
+                "description": "Tenant credit balance",
+                "schema": {
+                  "$ref": "#/definitions/TenantCreditBalance"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            },
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies": {
+          "get": {
+            "tags": [
+              "Spending policies"
+            ],
+            "operationId": "ListSpendingPolicies",
+            "summary": "List spending policies",
+            "description": "Lists the spending policies that cap Copilot Credits consumption, with their monthly limit, per-user limit, billing methods and status. Supports filtering on status, displayName and createdDateTime.",
+            "x-ms-visibility": "important",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "$filter",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Filter query",
+                "description": "OData filter on status, displayName or createdDateTime (eq, ne, and, or). Example: status eq microsoft.graph.spendingPolicyStatus'enabled'",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$orderby",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Order by",
+                "description": "displayName or createdDateTime, optionally followed by asc or desc. Example: createdDateTime desc",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$top",
+                "in": "query",
+                "required": false,
+                "type": "integer",
+                "format": "int32",
+                "x-ms-summary": "Top count",
+                "description": "Maximum number of policies to return per page.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$count",
+                "in": "query",
+                "required": false,
+                "type": "boolean",
+                "x-ms-summary": "Include count",
+                "description": "Set to true to include the total number of matching policies.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "x-ms-pageable": {
+              "nextLinkName": "@odata.nextLink"
+            },
+            "responses": {
+              "200": {
+                "description": "Spending policies",
+                "schema": {
+                  "$ref": "#/definitions/SpendingPolicyCollection"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Spending policies"
+            ],
+            "operationId": "CreateSpendingPolicy",
+            "summary": "Create spending policy",
+            "description": "Creates a spending policy (always created disabled). For a selected-groups policy, add at least one group afterwards with 'Add group to policy' so the service can enable it. Requires the Billing Administrator or Global Administrator role.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/CreateSpendingPolicyRequest"
+                }
+              }
+            ],
+            "responses": {
+              "201": {
+                "description": "Created spending policy",
+                "schema": {
+                  "$ref": "#/definitions/SpendingPolicy"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}": {
+          "get": {
+            "tags": [
+              "Spending policies"
+            ],
+            "operationId": "GetSpendingPolicy",
+            "summary": "Get spending policy",
+            "description": "Gets one spending policy with its limits, billing methods, status and current ETag.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Spending policy",
+                "schema": {
+                  "$ref": "#/definitions/SpendingPolicy"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "Spending policies"
+            ],
+            "operationId": "DeleteSpendingPolicy",
+            "summary": "Delete spending policy",
+            "description": "Deletes a spending policy. The policy stops governing consumption.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "Deleted"
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "patch": {
+            "tags": [
+              "Spending policies"
+            ],
+            "operationId": "UpdateSpendingPolicy",
+            "summary": "Update spending policy",
+            "description": "Updates the display name, monthly limit, per-user limit or billing methods of a spending policy. Only the supplied values change.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/UpdateSpendingPolicyRequest"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Updated spending policy",
+                "schema": {
+                  "$ref": "#/definitions/SpendingPolicy"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/microsoft.graph.selectedGroupsSpendingPolicy/assignedGroups": {
+          "get": {
+            "tags": [
+              "Policy groups"
+            ],
+            "operationId": "ListAssignedGroups",
+            "summary": "List policy groups",
+            "description": "Lists the groups assigned to a selected-groups spending policy. Returns 404 for a tenant-wide (all users) policy.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Assigned groups",
+                "schema": {
+                  "$ref": "#/definitions/GroupCollection"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/microsoft.graph.selectedGroupsSpendingPolicy/assignedGroups/$ref": {
+          "get": {
+            "tags": [
+              "Policy groups"
+            ],
+            "operationId": "ListAssignedGroupReferences",
+            "summary": "List policy group references",
+            "description": "Lists the reference links of the groups assigned to a selected-groups spending policy.",
+            "x-ms-visibility": "advanced",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Group references",
+                "schema": {
+                  "$ref": "#/definitions/ReferenceCollection"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Policy groups"
+            ],
+            "operationId": "AddAssignedGroup",
+            "summary": "Add group to policy",
+            "description": "Assigns a Microsoft Entra group to a selected-groups spending policy. Linking the first group can enable a disabled policy.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/AddGroupRequest"
+                }
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "Group added"
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/microsoft.graph.selectedGroupsSpendingPolicy/assignedGroups/{groupId}/$ref": {
+          "delete": {
+            "tags": [
+              "Policy groups"
+            ],
+            "operationId": "RemoveAssignedGroup",
+            "summary": "Remove group from policy",
+            "description": "Removes a group from a selected-groups spending policy. Removing the last group is refused (409 lastAssignedGroup).",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/AssignedGroupId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "Group removed"
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/serviceSettings": {
+          "get": {
+            "tags": [
+              "Service settings"
+            ],
+            "operationId": "ListServiceSettings",
+            "summary": "List policy services",
+            "description": "Lists the services governed (enabled) or excluded (disabled) by a spending policy, with the parent policy status and ETag.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Service settings",
+                "schema": {
+                  "$ref": "#/definitions/ServiceSettingCollection"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Service settings"
+            ],
+            "operationId": "CreateServiceSetting",
+            "summary": "Add service to policy",
+            "description": "Adds a service to a spending policy. Settings not in the request are preserved.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/CreateServiceSettingRequest"
+                }
+              }
+            ],
+            "responses": {
+              "201": {
+                "description": "Created service setting",
+                "schema": {
+                  "$ref": "#/definitions/ServiceSetting"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/serviceSettings/{serviceId}": {
+          "get": {
+            "tags": [
+              "Service settings"
+            ],
+            "operationId": "GetServiceSetting",
+            "summary": "Get policy service",
+            "description": "Gets the governance state of one service within a spending policy.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/PolicyServiceId"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Service setting",
+                "schema": {
+                  "$ref": "#/definitions/ServiceSetting"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "patch": {
+            "tags": [
+              "Service settings"
+            ],
+            "operationId": "UpdateServiceSetting",
+            "summary": "Update policy service",
+            "description": "Enables or disables a service within a spending policy. Setting state to disabled is how a service is removed. Disabling the last enabled service is refused (409 atLeastOneServiceRequired).",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/PolicyServiceId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/UpdateServiceSettingRequest"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Updated service setting",
+                "schema": {
+                  "$ref": "#/definitions/ServiceSetting"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/emailThresholdSettings": {
+          "get": {
+            "tags": [
+              "Alerts"
+            ],
+            "operationId": "GetAlertSetting",
+            "summary": "Get policy alert settings",
+            "description": "Gets the notify-only email threshold alert configuration of a spending policy. Returns 404 itemNotFound when no alert is configured.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Alert setting",
+                "schema": {
+                  "$ref": "#/definitions/AlertSetting"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "delete": {
+            "tags": [
+              "Alerts"
+            ],
+            "operationId": "DeleteAlertSetting",
+            "summary": "Delete policy alert settings",
+            "description": "Turns alerting off and discards the alert configuration of a spending policy. Recipient references are kept.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "Deleted"
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "patch": {
+            "tags": [
+              "Alerts"
+            ],
+            "operationId": "UpdateAlertSetting",
+            "summary": "Create or update policy alert settings",
+            "description": "Creates (first call) or updates the threshold alerts of a spending policy. Add at least one recipient before enabling alerts. Thresholds only notify; they do not change limits.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/UpdateAlertSettingRequest"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Alert setting",
+                "schema": {
+                  "$ref": "#/definitions/AlertSetting"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/emailThresholdSettings/recipients": {
+          "get": {
+            "tags": [
+              "Alerts"
+            ],
+            "operationId": "ListAlertRecipients",
+            "summary": "List alert recipients",
+            "description": "Lists the users notified when an alert threshold of a spending policy is crossed.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Recipients",
+                "schema": {
+                  "$ref": "#/definitions/UserCollection"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/emailThresholdSettings/recipients/$ref": {
+          "get": {
+            "tags": [
+              "Alerts"
+            ],
+            "operationId": "ListAlertRecipientReferences",
+            "summary": "List alert recipient references",
+            "description": "Lists the reference links of the alert recipients of a spending policy.",
+            "x-ms-visibility": "advanced",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Recipient references",
+                "schema": {
+                  "$ref": "#/definitions/ReferenceCollection"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          },
+          "post": {
+            "tags": [
+              "Alerts"
+            ],
+            "operationId": "AddAlertRecipient",
+            "summary": "Add alert recipient",
+            "description": "Adds a tenant user as a recipient of the threshold alerts of a spending policy.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/AddRecipientRequest"
+                }
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "Recipient added"
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/spendingPolicies/{policyId}/emailThresholdSettings/recipients/{recipientId}/$ref": {
+          "delete": {
+            "tags": [
+              "Alerts"
+            ],
+            "operationId": "RemoveAlertRecipient",
+            "summary": "Remove alert recipient",
+            "description": "Removes a user from the alert recipients of a spending policy. Removing the last recipient while alerting is enabled is refused (400 alertRecipientsRequired).",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/PolicyId"
+              },
+              {
+                "$ref": "#/parameters/RecipientId"
+              },
+              {
+                "$ref": "#/parameters/IfMatch"
+              }
+            ],
+            "responses": {
+              "204": {
+                "description": "Recipient removed"
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/userBalances/{userId}": {
+          "get": {
+            "tags": [
+              "User balances"
+            ],
+            "operationId": "GetUserBalance",
+            "summary": "Get user balance",
+            "description": "Gets a user's month-to-date Copilot Credits consumption for every governed service: consumed and remaining credits, applicable limits, the selected spending policy, and whether the user can still consume (with the reason).",
+            "x-ms-visibility": "important",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/UserId"
+              },
+              {
+                "name": "$expand",
+                "in": "query",
+                "required": true,
+                "type": "string",
+                "enum": [
+                  "serviceBalances"
+                ],
+                "default": "serviceBalances",
+                "x-ms-summary": "Expand",
+                "description": "Inlines the per-service balance rows.",
+                "x-ms-visibility": "internal"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "User balance",
+                "schema": {
+                  "$ref": "#/definitions/UserBalance"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/userBalances/{userId}/serviceBalances": {
+          "get": {
+            "tags": [
+              "User balances"
+            ],
+            "operationId": "ListUserServiceBalances",
+            "summary": "List user service balances",
+            "description": "Lists a user's per-service balance rows (month-to-date consumption, limits, remaining credits, access decision). Filter on serviceId or isConsumptionAllowed.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/UserId"
+              },
+              {
+                "name": "$filter",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Filter query",
+                "description": "OData filter on serviceId (eq, in) or isConsumptionAllowed (eq), combined with and. Example: isConsumptionAllowed eq false",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$orderby",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Order by",
+                "description": "serviceId, optionally followed by asc or desc.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$top",
+                "in": "query",
+                "required": false,
+                "type": "integer",
+                "format": "int32",
+                "x-ms-summary": "Top count",
+                "description": "Upper bound of rows per page.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$count",
+                "in": "query",
+                "required": false,
+                "type": "boolean",
+                "x-ms-summary": "Include count",
+                "description": "Set to true to include the total number of matching rows.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "x-ms-pageable": {
+              "nextLinkName": "@odata.nextLink"
+            },
+            "responses": {
+              "200": {
+                "description": "User service balances",
+                "schema": {
+                  "$ref": "#/definitions/UserServiceBalanceCollection"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        },
+        "/{connectionId}/copilot/costManagement/userBalances/{userId}/serviceBalances/{serviceId}": {
+          "get": {
+            "tags": [
+              "User balances"
+            ],
+            "operationId": "GetUserServiceBalance",
+            "summary": "Get user service balance",
+            "description": "Gets one service's balance row for one user: month-to-date consumption, limits, remaining credits and why the user can or cannot consume it.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/UserId"
+              },
+              {
+                "$ref": "#/parameters/UserServiceId"
+              },
+              {
+                "$ref": "#/parameters/Select"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "User service balance",
+                "schema": {
+                  "$ref": "#/definitions/UserServiceBalance"
+                }
+              },
+              "default": {
+                "description": "Error",
+                "schema": {
+                  "$ref": "#/definitions/ODataError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "definitions": {
+        "CostManagementQuantity": {
+          "type": "object",
+          "description": "A quantity of Copilot Credits that is either limited to a value or unlimited.",
+          "properties": {
+            "@odata.type": {
+              "type": "string",
+              "title": "Quantity type",
+              "description": "#microsoft.graph.limitedCostManagementQuantity or #microsoft.graph.unlimitedCostManagementQuantity.",
+              "x-ms-visibility": "advanced"
+            },
+            "value": {
+              "type": "number",
+              "format": "double",
+              "title": "Value",
+              "description": "Numeric value in the stated unit. Absent when the quantity is unlimited. Zero permits no consumption."
+            },
+            "unit": {
+              "type": "string",
+              "title": "Unit",
+              "description": "Unit of the quantity, for example copilotCredit."
+            },
+            "isUnlimited": {
+              "type": "boolean",
+              "title": "Is unlimited",
+              "description": "True when the quantity is unlimited (added by the connector)."
+            }
+          }
+        },
+        "DataStatus": {
+          "type": "object",
+          "description": "Freshness of the source data.",
+          "properties": {
+            "lastModifiedDateTime": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Data last modified",
+              "description": "Last modification time of the source data behind this row."
+            }
+          }
+        },
+        "BillingMethodBalance": {
+          "type": "object",
+          "description": "Credit balance for one billing method.",
+          "properties": {
+            "billingMethod": {
+              "type": "string",
+              "title": "Billing method",
+              "description": "prepaidCredits, payAsYouGo or notSpecified."
+            },
+            "purchasedQuantity": {
+              "type": "number",
+              "format": "double",
+              "title": "Purchased credits",
+              "description": "Credits purchased. Absent when there is no purchased pool (for example pay-as-you-go)."
+            },
+            "consumedQuantity": {
+              "type": "number",
+              "format": "double",
+              "title": "Consumed credits",
+              "description": "Credits consumed."
+            },
+            "remainingQuantity": {
+              "type": "number",
+              "format": "double",
+              "title": "Remaining credits",
+              "description": "Credits still available, as calculated by the service. Absent when there is no finite pool."
+            },
+            "unit": {
+              "type": "string",
+              "title": "Unit",
+              "description": "Unit of every quantity in this row, for example copilotCredit."
+            },
+            "dataStatus": {
+              "$ref": "#/definitions/DataStatus"
+            }
+          }
+        },
+        "TenantCreditBalance": {
+          "type": "object",
+          "description": "Tenant Copilot Credits balance snapshot.",
+          "properties": {
+            "billingMethodBalances": {
+              "type": "array",
+              "title": "Billing method balances",
+              "description": "One balance row per billing method.",
+              "items": {
+                "$ref": "#/definitions/BillingMethodBalance"
+              }
+            }
+          }
+        },
+        "Identity": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "ID",
+              "description": "Identifier of the identity."
+            },
+            "displayName": {
+              "type": "string",
+              "title": "Display name",
+              "description": "Display name of the identity."
+            }
+          }
+        },
+        "IdentitySet": {
+          "type": "object",
+          "properties": {
+            "user": {
+              "$ref": "#/definitions/Identity"
+            },
+            "application": {
+              "$ref": "#/definitions/Identity"
+            }
+          }
+        },
+        "SpendingPolicy": {
+          "type": "object",
+          "description": "A policy that caps Copilot Credits consumption for an audience. Limits apply per UTC calendar month.",
+          "properties": {
+            "@odata.type": {
+              "type": "string",
+              "title": "Policy OData type",
+              "description": "#microsoft.graph.allUsersSpendingPolicy or #microsoft.graph.selectedGroupsSpendingPolicy.",
+              "x-ms-visibility": "advanced"
+            },
+            "policyType": {
+              "type": "string",
+              "title": "Audience type",
+              "description": "allUsers or selectedGroups (added by the connector)."
+            },
+            "id": {
+              "type": "string",
+              "title": "Policy ID",
+              "description": "Identifier of the spending policy."
+            },
+            "displayName": {
+              "type": "string",
+              "title": "Policy name",
+              "description": "Display name of the spending policy."
+            },
+            "status": {
+              "type": "string",
+              "title": "Status",
+              "description": "enabled, disabled, provisioning or provisioningFailed."
+            },
+            "periodLimit": {
+              "$ref": "#/definitions/CostManagementQuantity"
+            },
+            "perUserLimit": {
+              "$ref": "#/definitions/CostManagementQuantity"
+            },
+            "billingMethods": {
+              "type": "string",
+              "title": "Billing methods",
+              "description": "How consumption is funded: notSpecified, prepaidCredits, payAsYouGo or a combination such as prepaidCredits,payAsYouGo."
+            },
+            "createdDateTime": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Created",
+              "description": "When the policy was created."
+            },
+            "createdBy": {
+              "$ref": "#/definitions/IdentitySet"
+            },
+            "lastModifiedDateTime": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Last modified",
+              "description": "When the policy was last modified."
+            },
+            "lastModifiedBy": {
+              "$ref": "#/definitions/IdentitySet"
+            },
+            "etag": {
+              "type": "string",
+              "title": "ETag",
+              "description": "Current ETag of the policy, when returned by the service (added by the connector)."
+            }
+          }
+        },
+        "SpendingPolicyCollection": {
+          "type": "object",
+          "properties": {
+            "@odata.count": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Total count",
+              "description": "Total number of matching policies, when requested."
+            },
+            "value": {
+              "type": "array",
+              "title": "Policies",
+              "description": "Spending policies.",
+              "items": {
+                "$ref": "#/definitions/SpendingPolicy"
+              }
+            },
+            "@odata.nextLink": {
+              "type": "string",
+              "title": "Next link",
+              "description": "URL of the next page, when more results exist.",
+              "x-ms-visibility": "advanced"
+            }
+          }
+        },
+        "ServiceSetting": {
+          "type": "object",
+          "description": "Governance state of one service within a spending policy.",
+          "properties": {
+            "serviceId": {
+              "type": "string",
+              "title": "Service ID",
+              "description": "Key of the governed service category, for example cowork or workIQ."
+            },
+            "state": {
+              "type": "string",
+              "title": "State",
+              "description": "enabled (governed by the policy) or disabled (excluded)."
+            },
+            "parentStatus": {
+              "type": "string",
+              "title": "Policy status",
+              "description": "Lifecycle status of the parent policy."
+            },
+            "parentEtag": {
+              "type": "string",
+              "title": "Policy ETag",
+              "description": "ETag of the parent policy."
+            },
+            "etag": {
+              "type": "string",
+              "title": "ETag",
+              "description": "ETag returned by the last change, when present (added by the connector)."
+            }
+          }
+        },
+        "ServiceSettingCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "Services",
+              "description": "Service settings of the policy.",
+              "items": {
+                "$ref": "#/definitions/ServiceSetting"
+              }
+            }
+          }
+        },
+        "AlertThreshold": {
+          "type": "object",
+          "properties": {
+            "@odata.type": {
+              "type": "string",
+              "title": "Threshold OData type",
+              "description": "#microsoft.graph.percentageCostManagementAlertThreshold or #microsoft.graph.absoluteCostManagementAlertThreshold.",
+              "x-ms-visibility": "advanced"
+            },
+            "thresholdType": {
+              "type": "string",
+              "title": "Threshold type",
+              "description": "percentage or absolute (added by the connector)."
+            },
+            "value": {
+              "type": "number",
+              "format": "double",
+              "title": "Threshold value",
+              "description": "Percentage of the limit (1-100) or absolute quantity."
+            },
+            "unit": {
+              "type": "string",
+              "title": "Unit",
+              "description": "Unit of an absolute threshold, for example copilotCredit."
+            }
+          }
+        },
+        "AlertSetting": {
+          "type": "object",
+          "description": "Notify-only email threshold alert configuration of a spending policy.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "Alert setting ID",
+              "description": "Identifier of the alert configuration."
+            },
+            "isEnabled": {
+              "type": "boolean",
+              "title": "Alerts enabled",
+              "description": "Whether alerting is enabled."
+            },
+            "thresholds": {
+              "type": "array",
+              "title": "Thresholds",
+              "description": "Configured thresholds.",
+              "items": {
+                "$ref": "#/definitions/AlertThreshold"
+              }
+            },
+            "etag": {
+              "type": "string",
+              "title": "ETag",
+              "description": "ETag returned by the last change, when present (added by the connector)."
+            }
+          }
+        },
+        "DirectoryGroup": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "Group ID",
+              "description": "Object ID of the group."
+            },
+            "displayName": {
+              "type": "string",
+              "title": "Group name",
+              "description": "Display name of the group."
+            },
+            "description": {
+              "type": "string",
+              "title": "Group description",
+              "description": "Description of the group."
+            },
+            "mail": {
+              "type": "string",
+              "title": "Group email",
+              "description": "Email address of the group."
+            }
+          }
+        },
+        "GroupCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "Groups",
+              "description": "Groups assigned to the policy.",
+              "items": {
+                "$ref": "#/definitions/DirectoryGroup"
+              }
+            }
+          }
+        },
+        "DirectoryUser": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "User ID",
+              "description": "Object ID of the user."
+            },
+            "displayName": {
+              "type": "string",
+              "title": "User name",
+              "description": "Display name of the user."
+            },
+            "userPrincipalName": {
+              "type": "string",
+              "title": "User principal name",
+              "description": "User principal name of the user."
+            },
+            "mail": {
+              "type": "string",
+              "title": "User email",
+              "description": "Email address of the user."
+            }
+          }
+        },
+        "UserCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "Recipients",
+              "description": "Alert recipients.",
+              "items": {
+                "$ref": "#/definitions/DirectoryUser"
+              }
+            }
+          }
+        },
+        "ReferenceCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "References",
+              "description": "Reference links.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@odata.id": {
+                    "type": "string",
+                    "title": "Reference URL",
+                    "description": "Reference URL of the directory object."
+                  },
+                  "id": {
+                    "type": "string",
+                    "title": "Object ID",
+                    "description": "Object ID parsed from the reference URL (added by the connector)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "UserServiceBalance": {
+          "type": "object",
+          "description": "A user's month-to-date (UTC) balance for one service, with the access decision.",
+          "properties": {
+            "serviceId": {
+              "type": "string",
+              "title": "Service ID",
+              "description": "Service identifier (case-sensitive)."
+            },
+            "spendingPolicyId": {
+              "type": "string",
+              "title": "Spending policy ID",
+              "description": "Spending policy selected for this service."
+            },
+            "consumedQuantity": {
+              "type": "number",
+              "format": "double",
+              "title": "Consumed credits",
+              "description": "Credits consumed month-to-date (UTC) for this service."
+            },
+            "unit": {
+              "type": "string",
+              "title": "Unit",
+              "description": "Unit of consumedQuantity, for example copilotCredit."
+            },
+            "configuredPeriodLimit": {
+              "$ref": "#/definitions/CostManagementQuantity"
+            },
+            "configuredPerUserLimit": {
+              "$ref": "#/definitions/CostManagementQuantity"
+            },
+            "effectiveCapacityQuantity": {
+              "$ref": "#/definitions/CostManagementQuantity"
+            },
+            "remainingQuantity": {
+              "$ref": "#/definitions/CostManagementQuantity"
+            },
+            "isConsumptionAllowed": {
+              "type": "boolean",
+              "title": "Consumption allowed",
+              "description": "Whether the user can currently consume the service."
+            },
+            "accessDecisionReason": {
+              "type": "string",
+              "title": "Access decision reason",
+              "description": "allowed, notEntitled or limitExhausted."
+            },
+            "dataStatus": {
+              "$ref": "#/definitions/DataStatus"
+            }
+          }
+        },
+        "UserServiceBalanceCollection": {
+          "type": "object",
+          "properties": {
+            "@odata.count": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Total count",
+              "description": "Total number of matching rows, when requested."
+            },
+            "value": {
+              "type": "array",
+              "title": "Service balances",
+              "description": "Per-service balance rows.",
+              "items": {
+                "$ref": "#/definitions/UserServiceBalance"
+              }
+            },
+            "@odata.nextLink": {
+              "type": "string",
+              "title": "Next link",
+              "description": "URL of the next page, when more results exist.",
+              "x-ms-visibility": "advanced"
+            }
+          }
+        },
+        "UnevaluatedService": {
+          "type": "object",
+          "properties": {
+            "serviceId": {
+              "type": "string",
+              "title": "Service ID",
+              "description": "Service whose balance could not be evaluated."
+            },
+            "reason": {
+              "type": "string",
+              "title": "Reason",
+              "description": "upstreamFailure or noApplicablePolicy."
+            }
+          }
+        },
+        "SelectionDataStatus": {
+          "type": "object",
+          "properties": {
+            "evaluatedDateTime": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Evaluated",
+              "description": "When the balance was evaluated."
+            },
+            "policyConfigurationAsOfDateTime": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Policy configuration as of",
+              "description": "As-of time of the policy configuration used."
+            },
+            "groupMembershipAsOfDateTime": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Group membership as of",
+              "description": "As-of time of the group membership used."
+            },
+            "usageAsOfDateTime": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Usage as of",
+              "description": "As-of time of the usage data used."
+            }
+          }
+        },
+        "UserBalance": {
+          "type": "object",
+          "description": "A user's computed per-service consumption balance.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "title": "User ID",
+              "description": "Object ID of the user."
+            },
+            "serviceBalances": {
+              "type": "array",
+              "title": "Service balances",
+              "description": "Per-service balance rows. Empty when the user never consumed anything.",
+              "items": {
+                "$ref": "#/definitions/UserServiceBalance"
+              }
+            },
+            "unevaluatedServices": {
+              "type": "array",
+              "title": "Unevaluated services",
+              "description": "Services whose balance could not be evaluated (partial result when not empty).",
+              "items": {
+                "$ref": "#/definitions/UnevaluatedService"
+              }
+            },
+            "selectionDataStatus": {
+              "$ref": "#/definitions/SelectionDataStatus"
+            }
+          }
+        },
+        "CreateSpendingPolicyRequest": {
+          "type": "object",
+          "required": [
+            "policyType",
+            "displayName",
+            "serviceIds"
+          ],
+          "properties": {
+            "policyType": {
+              "type": "string",
+              "enum": [
+                "selectedGroups",
+                "allUsers"
+              ],
+              "x-ms-summary": "Audience type",
+              "description": "selectedGroups: only members of the groups you add later. allUsers: every user in the tenant. Cannot be changed after creation.",
+              "x-ms-visibility": "important"
+            },
+            "displayName": {
+              "type": "string",
+              "x-ms-summary": "Policy name",
+              "description": "10-64 characters: letters, digits and spaces only.",
+              "x-ms-visibility": "important"
+            },
+            "periodLimit": {
+              "type": "number",
+              "format": "double",
+              "x-ms-summary": "Monthly limit (credits)",
+              "description": "Copilot Credits cap for the whole audience per UTC calendar month. Leave empty for unlimited.",
+              "x-ms-visibility": "important"
+            },
+            "perUserLimit": {
+              "type": "number",
+              "format": "double",
+              "x-ms-summary": "Per-user monthly limit (credits)",
+              "description": "Copilot Credits cap per user per UTC calendar month. Leave empty for unlimited.",
+              "x-ms-visibility": "important"
+            },
+            "serviceIds": {
+              "type": "string",
+              "x-ms-summary": "Governed services",
+              "description": "Comma-separated service IDs to govern, for example cowork,workIQ. At least one is required.",
+              "x-ms-visibility": "important"
+            },
+            "billingMethods": {
+              "type": "string",
+              "enum": [
+                "notSpecified",
+                "prepaidCredits",
+                "payAsYouGo",
+                "prepaidCredits,payAsYouGo"
+              ],
+              "x-ms-summary": "Billing methods",
+              "description": "How consumption under this policy is funded. Defaults to notSpecified."
+            }
+          }
+        },
+        "UpdateSpendingPolicyRequest": {
+          "type": "object",
+          "properties": {
+            "displayName": {
+              "type": "string",
+              "x-ms-summary": "Policy name",
+              "description": "New display name (10-64 characters: letters, digits and spaces)."
+            },
+            "periodLimit": {
+              "type": "number",
+              "format": "double",
+              "x-ms-summary": "Monthly limit (credits)",
+              "description": "New Copilot Credits cap for the whole audience per UTC month."
+            },
+            "periodLimitUnlimited": {
+              "type": "boolean",
+              "x-ms-summary": "Remove monthly limit",
+              "description": "Set to true to make the monthly limit unlimited."
+            },
+            "perUserLimit": {
+              "type": "number",
+              "format": "double",
+              "x-ms-summary": "Per-user monthly limit (credits)",
+              "description": "New Copilot Credits cap per user per UTC month."
+            },
+            "perUserLimitUnlimited": {
+              "type": "boolean",
+              "x-ms-summary": "Remove per-user limit",
+              "description": "Set to true to make the per-user limit unlimited."
+            },
+            "billingMethods": {
+              "type": "string",
+              "enum": [
+                "notSpecified",
+                "prepaidCredits",
+                "payAsYouGo",
+                "prepaidCredits,payAsYouGo"
+              ],
+              "x-ms-summary": "Billing methods",
+              "description": "How consumption under this policy is funded."
+            }
+          }
+        },
+        "CreateServiceSettingRequest": {
+          "type": "object",
+          "required": [
+            "serviceId",
+            "state"
+          ],
+          "properties": {
+            "serviceId": {
+              "type": "string",
+              "x-ms-summary": "Service ID",
+              "description": "Key of the service category to add, for example researcherCritiqueAndCouncil.",
+              "x-ms-visibility": "important"
+            },
+            "state": {
+              "type": "string",
+              "enum": [
+                "enabled",
+                "disabled"
+              ],
+              "default": "enabled",
+              "x-ms-summary": "State",
+              "description": "enabled: governed by the policy. disabled: excluded.",
+              "x-ms-visibility": "important"
+            }
+          }
+        },
+        "UpdateServiceSettingRequest": {
+          "type": "object",
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "enabled",
+                "disabled"
+              ],
+              "x-ms-summary": "State",
+              "description": "enabled: governed by the policy. disabled: excluded (this is how a service is removed).",
+              "x-ms-visibility": "important"
+            }
+          }
+        },
+        "UpdateAlertSettingRequest": {
+          "type": "object",
+          "properties": {
+            "isEnabled": {
+              "type": "boolean",
+              "x-ms-summary": "Alerts enabled",
+              "description": "Enable or disable alerting. Enabling requires at least one recipient.",
+              "x-ms-visibility": "important"
+            },
+            "percentageThresholds": {
+              "type": "string",
+              "x-ms-summary": "Percentage thresholds",
+              "description": "Comma-separated percentages of the limit (integers 1-100), for example 80,100.",
+              "x-ms-visibility": "important"
+            },
+            "absoluteThresholds": {
+              "type": "string",
+              "x-ms-summary": "Absolute thresholds (credits)",
+              "description": "Comma-separated absolute Copilot Credits values, for example 5000,9000."
+            },
+            "clearThresholds": {
+              "type": "boolean",
+              "x-ms-summary": "Clear all thresholds",
+              "description": "Set to true to remove every threshold while keeping the configuration and its recipients."
+            }
+          }
+        },
+        "AddGroupRequest": {
+          "type": "object",
+          "required": [
+            "groupId"
+          ],
+          "properties": {
+            "groupId": {
+              "type": "string",
+              "x-ms-summary": "Group ID",
+              "description": "Microsoft Entra object ID of the group to assign.",
+              "x-ms-visibility": "important"
+            }
+          }
+        },
+        "AddRecipientRequest": {
+          "type": "object",
+          "required": [
+            "userId"
+          ],
+          "properties": {
+            "userId": {
+              "type": "string",
+              "x-ms-summary": "User ID",
+              "description": "Microsoft Entra object ID of the user to notify.",
+              "x-ms-visibility": "important"
+            }
+          }
+        },
+        "ODataError": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "title": "Error code",
+                  "description": "Generic OData error code."
+                },
+                "message": {
+                  "type": "string",
+                  "title": "Error message",
+                  "description": "Error message."
+                },
+                "innerError": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "title": "Inner error code",
+                      "description": "Workload-specific error code, for example lastAssignedGroup."
+                    },
+                    "request-id": {
+                      "type": "string",
+                      "title": "Request ID",
+                      "description": "Request identifier."
+                    },
+                    "date": {
+                      "type": "string",
+                      "title": "Date",
+                      "description": "Time of the error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": {
+        "PolicyId": {
+          "name": "policyId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Spending policy ID",
+          "description": "ID of the spending policy.",
+          "x-ms-dynamic-values": {
+            "operationId": "ListSpendingPolicies",
+            "value-collection": "value",
+            "value-path": "id",
+            "value-title": "displayName"
+          }
+        },
+        "PolicyServiceId": {
+          "name": "serviceId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Service ID",
+          "description": "Key of the governed service category, for example cowork or workIQ.",
+          "x-ms-dynamic-values": {
+            "operationId": "ListServiceSettings",
+            "parameters": {
+              "policyId": {
+                "parameter": "policyId"
+              }
+            },
+            "value-collection": "value",
+            "value-path": "serviceId",
+            "value-title": "serviceId"
+          }
+        },
+        "AssignedGroupId": {
+          "name": "groupId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Group ID",
+          "description": "Microsoft Entra object ID of the group to remove.",
+          "x-ms-dynamic-values": {
+            "operationId": "ListAssignedGroups",
+            "parameters": {
+              "policyId": {
+                "parameter": "policyId"
+              }
+            },
+            "value-collection": "value",
+            "value-path": "id",
+            "value-title": "displayName"
+          }
+        },
+        "RecipientId": {
+          "name": "recipientId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Recipient user ID",
+          "description": "Microsoft Entra object ID of the recipient to remove.",
+          "x-ms-dynamic-values": {
+            "operationId": "ListAlertRecipients",
+            "parameters": {
+              "policyId": {
+                "parameter": "policyId"
+              }
+            },
+            "value-collection": "value",
+            "value-path": "id",
+            "value-title": "displayName"
+          }
+        },
+        "UserId": {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "User ID",
+          "description": "Microsoft Entra object ID (GUID) of the user."
+        },
+        "UserServiceId": {
+          "name": "serviceId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Service ID",
+          "description": "Service identifier (case-sensitive), for example workIQ.",
+          "x-ms-dynamic-values": {
+            "operationId": "ListUserServiceBalances",
+            "parameters": {
+              "userId": {
+                "parameter": "userId"
+              }
+            },
+            "value-collection": "value",
+            "value-path": "serviceId",
+            "value-title": "serviceId"
+          }
+        },
+        "IfMatch": {
+          "name": "If-Match",
+          "in": "header",
+          "required": false,
+          "type": "string",
+          "x-ms-summary": "Policy ETag (If-Match)",
+          "description": "ETag of the parent spending policy, for example W/\"6\". Leave empty: the connector reads the current ETag automatically.",
+          "x-ms-visibility": "advanced"
+        },
+        "Select": {
+          "name": "$select",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "x-ms-summary": "Select properties",
+          "description": "Comma-separated list of properties to return.",
+          "x-ms-visibility": "advanced"
+        }
+      },
+      "responses": {},
+      "security": [
+        {
+          "oauth2-auth": []
+        }
+      ],
+      "tags": [
+        {
+          "name": "Tenant balance",
+          "description": "Tenant-wide Copilot Credits balance."
+        },
+        {
+          "name": "Spending policies",
+          "description": "Policies that cap Copilot Credits consumption for an audience."
+        },
+        {
+          "name": "Policy groups",
+          "description": "Group audience of a selected-groups policy."
+        },
+        {
+          "name": "Service settings",
+          "description": "Services governed or excluded by a policy."
+        },
+        {
+          "name": "Alerts",
+          "description": "Notify-only threshold alerts and their recipients."
+        },
+        {
+          "name": "User balances",
+          "description": "Per-user, per-service consumption diagnostics."
+        }
+      ],
+      "securityDefinitions": {
+        "oauth2-auth": {
+          "type": "oauth2",
+          "flow": "accessCode",
+          "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+          "scopes": {},
+          "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize"
+        }
+      },
+      "x-ms-connector-metadata": [
+        {
+          "propertyName": "Website",
+          "propertyValue": "https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/api/admin-settings/cost-management/overview"
+        },
+        {
+          "propertyName": "Privacy policy",
+          "propertyValue": "https://privacy.microsoft.com/privacystatement"
+        },
+        {
+          "propertyName": "Categories",
+          "propertyValue": "IT Operations;Productivity"
+        }
+      ]
+    },
+    "runtimeUrls": [
+      "https://90d9d59b8118e2c897261899715d44.43.environment.api.powerplatform.com/connectors/runtime/invoke/scalegroups/europe002/shards/05/apis/zama-5fcopilotcostmanagement-5fb043a1f4407b1320/connections/"
+    ],
+    "primaryRuntimeUrl": "https://90d9d59b8118e2c897261899715d44.43.environment.api.powerplatform.com/connectors/runtime/invoke/scalegroups/europe002/shards/05/apis/zama-5fcopilotcostmanagement-5fb043a1f4407b1320/connections/",
+    "doNotUseApiHubNetRuntimeUrl": "https://90d9d59b-8118-e2c8-9726-1899715d4443.05.custom.europe002.azure-apihub.net/apim/zama-5fcopilotcostmanagement-5fb043a1f4407b1320",
+    "metadata": {
+      "source": "powerapps-user-defined",
+      "brandColor": "#007ee5",
+      "contact": {},
+      "license": {},
+      "publisherUrl": null,
+      "serviceUrl": null,
+      "documentationUrl": null,
+      "environmentName": "90d9d59b-8118-e2c8-9726-1899715d4443",
+      "xrmConnectorId": "5f4c31d6-a792-4f25-9ad4-c44fa178cbb2",
+      "almMode": "Solution",
+      "parameters": {},
+      "useNewApimVersion": "True",
+      "createdBy": "{\"id\":\"4c4a9447-400a-4b11-abf9-30cfe74a84c6\",\"displayName\":\"MOD Administrator\",\"email\":\"admin@diax43534993.onmicrosoft.com\",\"type\":\"User\",\"userType\":\"NotSpecified\",\"tenantId\":\"cd24ae47-6aca-4419-973f-ea765b169335\",\"userPrincipalName\":\"admin@diax43534993.onmicrosoft.com\"}",
+      "modifiedBy": "{\"id\":\"4c4a9447-400a-4b11-abf9-30cfe74a84c6\",\"displayName\":\"MOD Administrator\",\"email\":\"admin@diax43534993.onmicrosoft.com\",\"type\":\"User\",\"userType\":\"NotSpecified\",\"tenantId\":\"cd24ae47-6aca-4419-973f-ea765b169335\",\"userPrincipalName\":\"admin@diax43534993.onmicrosoft.com\"}",
+      "allowSharing": false,
+      "rateLimit": 0
+    },
+    "capabilities": [],
+    "description": "Microsoft 365 Copilot Cost Management API (Microsoft Graph beta). Read the tenant Copilot Credits balance, per-user and per-service consumption, and manage spending policies, governed services, threshold alerts and alert recipients.",
+    "apiDefinitions": {
+      "originalSwaggerUrl": "https://eur002002neuext.blob.core.windows.net/api-swagger-files/europe-002/zama-5fcopilotcostmanagement-5fb043a1f4407b1320.json_original?skoid=a18ce847-5bbf-4179-b6dd-1aa1cb321bd0&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2026-11-20T20%3A28%3A33Z&ske=2026-11-21T20%3A28%3A33Z&sks=b&skv=2025-01-05&sv=2025-01-05&spr=https&se=2026-11-21T15%3A06%3A42Z&sr=b&sp=r&sig=rI7L7G%2BRk8fCJc2pIpmN2beUbJGA5l64Y3%2F0hQbwVrU%3D",
+      "modifiedSwaggerUrl": "https://eur002002neuext.blob.core.windows.net/api-swagger-files/europe-002/zama-5fcopilotcostmanagement-5fb043a1f4407b1320.json?skoid=a18ce847-5bbf-4179-b6dd-1aa1cb321bd0&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2026-11-20T20%3A28%3A33Z&ske=2026-11-21T20%3A28%3A33Z&sks=b&skv=2025-01-05&sv=2025-01-05&spr=https&se=2026-11-21T15%3A06%3A42Z&sr=b&sp=r&sig=MabQi5ftlV5UaJDbBy%2BsCwv8tw%2FuoOtHbF64F8xhLQg%3D"
+    },
+    "policyTemplateInstances": [],
+    "backendService": {
+      "serviceUrl": "https://graph.microsoft.com/beta"
+    },
+    "createdBy": {
+      "id": "4c4a9447-400a-4b11-abf9-30cfe74a84c6",
+      "displayName": "MOD Administrator",
+      "email": "admin@diax43534993.onmicrosoft.com",
+      "type": "User",
+      "userType": "NotSpecified",
+      "tenantId": "cd24ae47-6aca-4419-973f-ea765b169335",
+      "userPrincipalName": "admin@diax43534993.onmicrosoft.com"
+    },
+    "modifiedBy": {
+      "id": "4c4a9447-400a-4b11-abf9-30cfe74a84c6",
+      "displayName": "MOD Administrator",
+      "email": "admin@diax43534993.onmicrosoft.com",
+      "type": "User",
+      "userType": "NotSpecified",
+      "tenantId": "cd24ae47-6aca-4419-973f-ea765b169335",
+      "userPrincipalName": "admin@diax43534993.onmicrosoft.com"
+    },
+    "createdTime": "2026-11-21T13:48:13.0247148Z",
+    "changedTime": "2026-11-21T14:06:08.3424642Z",
+    "environment": {
+      "id": "/providers/Microsoft.PowerApps/environments/90d9d59b-8118-e2c8-9726-1899715d4443",
+      "name": "90d9d59b-8118-e2c8-9726-1899715d4443"
+    },
+    "tier": "Standard",
+    "publisher": "MOD Administrator",
+    "almMode": "Solution",
+    "parameters": {},
+    "rateLimit": 0,
+    "apiVersion": "None"
+  }
+}

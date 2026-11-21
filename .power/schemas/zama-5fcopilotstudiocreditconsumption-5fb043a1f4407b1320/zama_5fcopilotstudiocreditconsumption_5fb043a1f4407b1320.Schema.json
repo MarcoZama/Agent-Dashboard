@@ -1,0 +1,1714 @@
+{
+  "name": "shared_zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320",
+  "id": "/providers/Microsoft.PowerApps/apis/shared_zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320",
+  "type": "Microsoft.PowerApps/apis",
+  "properties": {
+    "xrmConnectorId": "ff1c0cc0-22c6-4659-b7cd-ae04188a96eb",
+    "displayName": "CopilotStudioCreditConsumption",
+    "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20261121t000000ze964ebf1e646463bb6c8348f45b46dad/zama_copilotstudiocreditconsumption_iconblob.Png",
+    "iconBrandColor": "#007ee5",
+    "contact": {},
+    "license": {},
+    "apiEnvironment": "Shared",
+    "isCustomApi": true,
+    "blobUrisAreProxied": false,
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "identityProvider": "aad",
+          "clientId": "886c648c-9b08-43c0-80f5-a33670f144bb",
+          "scopes": [],
+          "redirectMode": "GlobalPerConnector",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect/zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320",
+          "properties": {
+            "IsFirstParty": "False",
+            "AzureActiveDirectoryResourceId": "https://api.powerplatform.com",
+            "IsOnbehalfofLoginSupported": true
+          },
+          "customParameters": {
+            "LoginUri": {
+              "value": "https://login.microsoftonline.com"
+            },
+            "TenantId": {
+              "value": "cd24ae47-6aca-4419-973f-ea765b169335"
+            },
+            "ResourceUri": {
+              "value": "https://api.powerplatform.com"
+            },
+            "EnableOnbehalfOfLogin": {
+              "value": "false"
+            }
+          }
+        },
+        "uiDefinition": {
+          "displayName": "OAuth Connection",
+          "description": "OAuth Connection",
+          "constraints": {
+            "required": "true",
+            "hidden": "false"
+          }
+        }
+      },
+      "token:TenantId": {
+        "type": "string",
+        "metadata": {
+          "sourceType": "AzureActiveDirectoryTenant"
+        },
+        "uiDefinition": {
+          "constraints": {
+            "required": "false",
+            "hidden": "true"
+          }
+        }
+      }
+    },
+    "swagger": {
+      "swagger": "2.0",
+      "info": {
+        "title": "Copilot Studio Credit Consumption",
+        "description": "Power Platform API licensing endpoints for Copilot Credits: tenant capacity and per-agent consumption (billed and non-billed credits by environment, channel, feature, tool, model and knowledge source), per-user consumption and per-agent credit limits.",
+        "version": "1.0.0",
+        "contact": {
+          "name": "Power Platform API - Licensing",
+          "url": "https://learn.microsoft.com/en-us/rest/api/power-platform/licensing/entitlement-insight"
+        }
+      },
+      "host": "90d9d59b8118e2c897261899715d44.43.environment.api.powerplatform.com",
+      "basePath": "/connectors/runtime/invoke/scalegroups/europe002/shards/05/apis/zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320/connections/",
+      "schemes": [
+        "https",
+        "http"
+      ],
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "tags": [
+        {
+          "name": "Capacity",
+          "description": "Tenant and environment Copilot Credits capacity."
+        },
+        {
+          "name": "Agent consumption",
+          "description": "Copilot Credits consumed by Copilot Studio agents."
+        },
+        {
+          "name": "User consumption",
+          "description": "Copilot Credits consumed by users."
+        },
+        {
+          "name": "Agent limits",
+          "description": "Per-agent monthly credit limits."
+        },
+        {
+          "name": "Environments",
+          "description": "Power Platform environments."
+        }
+      ],
+      "paths": {
+        "/{connectionId}/licensing/entitlements/{entitlementId}": {
+          "get": {
+            "tags": [
+              "Capacity"
+            ],
+            "operationId": "GetCreditCapacity",
+            "summary": "Get tenant credit capacity",
+            "description": "Returns the tenant Copilot Credits capacity for the current month: entitled, allocated, consumed and available credits, pay-as-you-go consumption, overage status and the date the consumption data was last updated.",
+            "x-ms-visibility": "important",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Tenant entitlement",
+                "schema": {
+                  "$ref": "#/definitions/CreditCapacity"
+                }
+              },
+              "204": {
+                "description": "No entitlement for this tenant"
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/entitlements/{entitlementId}/resources": {
+          "get": {
+            "tags": [
+              "Agent consumption"
+            ],
+            "operationId": "ListAgentCreditConsumption",
+            "summary": "List agent credit consumption",
+            "description": "Returns Copilot Credits consumed by every Copilot Studio agent across all environments in a date range: billed and non-billed credits with agent, environment, channel, feature, tool, LLM model and knowledge source. Can group rows (for example by agent), keep the top N and estimate cost from a price per credit. Defaults to the current month up to yesterday (UTC).",
+            "x-ms-visibility": "important",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/FromDate"
+              },
+              {
+                "$ref": "#/parameters/ToDate"
+              },
+              {
+                "$ref": "#/parameters/GroupBy"
+              },
+              {
+                "$ref": "#/parameters/Top"
+              },
+              {
+                "$ref": "#/parameters/PricePerCredit"
+              },
+              {
+                "$ref": "#/parameters/SplitByDay"
+              },
+              {
+                "$ref": "#/parameters/IncludeEnvironmentNames"
+              },
+              {
+                "$ref": "#/parameters/FetchAllPages"
+              },
+              {
+                "name": "pageSize",
+                "in": "query",
+                "required": false,
+                "type": "integer",
+                "format": "int32",
+                "x-ms-summary": "Page size",
+                "description": "Page size sent to the service. Defaults to 5000.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/IncludeFields"
+              },
+              {
+                "$ref": "#/parameters/ContinuationToken"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Agent consumption",
+                "schema": {
+                  "$ref": "#/definitions/ConsumptionResponse"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/entitlements/{entitlementId}/environments/{environmentId}/resources": {
+          "get": {
+            "tags": [
+              "Agent consumption"
+            ],
+            "operationId": "ListEnvironmentAgentCreditConsumption",
+            "summary": "List agent credit consumption in an environment",
+            "description": "Returns Copilot Credits consumed by the Copilot Studio agents of one environment in a date range, with the same breakdown, grouping and cost options as 'List agent credit consumption'.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/EnvironmentId"
+              },
+              {
+                "$ref": "#/parameters/FromDate"
+              },
+              {
+                "$ref": "#/parameters/ToDate"
+              },
+              {
+                "$ref": "#/parameters/GroupBy"
+              },
+              {
+                "$ref": "#/parameters/Top"
+              },
+              {
+                "$ref": "#/parameters/PricePerCredit"
+              },
+              {
+                "$ref": "#/parameters/SplitByDay"
+              },
+              {
+                "$ref": "#/parameters/IncludeEnvironmentNames"
+              },
+              {
+                "$ref": "#/parameters/FetchAllPages"
+              },
+              {
+                "$ref": "#/parameters/SearchRequest"
+              },
+              {
+                "name": "orderbyConsumed",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Order by consumed",
+                "description": "Sort order passed to the service.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/IncludeFields"
+              },
+              {
+                "$ref": "#/parameters/ContinuationToken"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Agent consumption",
+                "schema": {
+                  "$ref": "#/definitions/ConsumptionResponse"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/entitlements/{entitlementId}/resources/{resourceId}/users": {
+          "get": {
+            "tags": [
+              "User consumption"
+            ],
+            "operationId": "ListAgentUserCreditConsumption",
+            "summary": "List users of an agent by credit consumption",
+            "description": "Returns the Copilot Credits consumed by each user of one Copilot Studio agent in a date range.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/ResourceId"
+              },
+              {
+                "$ref": "#/parameters/FromDate"
+              },
+              {
+                "$ref": "#/parameters/ToDate"
+              },
+              {
+                "$ref": "#/parameters/GroupBy"
+              },
+              {
+                "$ref": "#/parameters/Top"
+              },
+              {
+                "$ref": "#/parameters/PricePerCredit"
+              },
+              {
+                "$ref": "#/parameters/SplitByDay"
+              },
+              {
+                "$ref": "#/parameters/IncludeEnvironmentNames"
+              },
+              {
+                "$ref": "#/parameters/FetchAllPages"
+              },
+              {
+                "$ref": "#/parameters/PageSizeOptional"
+              },
+              {
+                "$ref": "#/parameters/SearchRequest"
+              },
+              {
+                "$ref": "#/parameters/ContinuationToken"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "User consumption",
+                "schema": {
+                  "$ref": "#/definitions/ConsumptionResponse"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/entitlements/{entitlementId}/users/{userId}/resources": {
+          "get": {
+            "tags": [
+              "User consumption"
+            ],
+            "operationId": "ListUserAgentCreditConsumption",
+            "summary": "List agents used by a user by credit consumption",
+            "description": "Returns the Copilot Credits one user consumed with each Copilot Studio agent in a date range.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/UserId"
+              },
+              {
+                "$ref": "#/parameters/FromDate"
+              },
+              {
+                "$ref": "#/parameters/ToDate"
+              },
+              {
+                "$ref": "#/parameters/GroupBy"
+              },
+              {
+                "$ref": "#/parameters/Top"
+              },
+              {
+                "$ref": "#/parameters/PricePerCredit"
+              },
+              {
+                "$ref": "#/parameters/SplitByDay"
+              },
+              {
+                "$ref": "#/parameters/IncludeEnvironmentNames"
+              },
+              {
+                "$ref": "#/parameters/FetchAllPages"
+              },
+              {
+                "$ref": "#/parameters/PageSizeOptional"
+              },
+              {
+                "$ref": "#/parameters/SearchRequest"
+              },
+              {
+                "$ref": "#/parameters/ContinuationToken"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Agent consumption of the user",
+                "schema": {
+                  "$ref": "#/definitions/ConsumptionResponse"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/entitlements/{entitlementId}/users": {
+          "get": {
+            "tags": [
+              "User consumption"
+            ],
+            "operationId": "ListUserCreditConsumption",
+            "summary": "List user credit consumption",
+            "description": "Returns the Copilot Credits consumed by each user of the tenant in a date range. Group by user to get one total per user.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/FromDate"
+              },
+              {
+                "$ref": "#/parameters/ToDate"
+              },
+              {
+                "$ref": "#/parameters/GroupBy"
+              },
+              {
+                "$ref": "#/parameters/Top"
+              },
+              {
+                "$ref": "#/parameters/PricePerCredit"
+              },
+              {
+                "$ref": "#/parameters/SplitByDay"
+              },
+              {
+                "$ref": "#/parameters/IncludeEnvironmentNames"
+              },
+              {
+                "$ref": "#/parameters/FetchAllPages"
+              },
+              {
+                "$ref": "#/parameters/PageSizeOptional"
+              },
+              {
+                "$ref": "#/parameters/SearchRequest"
+              },
+              {
+                "name": "orderbyConsumed",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Order by consumed",
+                "description": "Sort order passed to the service.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/ContinuationToken"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "User consumption",
+                "schema": {
+                  "$ref": "#/definitions/ConsumptionResponse"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/entitlements/{entitlementId}/licenses": {
+          "get": {
+            "tags": [
+              "Capacity"
+            ],
+            "operationId": "GetCreditLicenseTrends",
+            "summary": "Get credit license trends",
+            "description": "Returns the Copilot Credits license trend for the tenant (licenses, quantities and entitled credits per date and license model).",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/FromDate"
+              },
+              {
+                "$ref": "#/parameters/ToDate"
+              },
+              {
+                "name": "$top",
+                "in": "query",
+                "required": false,
+                "type": "integer",
+                "format": "int32",
+                "x-ms-summary": "Top count",
+                "description": "Maximum number of records to return.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$filter",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Filter query",
+                "description": "OData filter expression.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "License trends",
+                "schema": {
+                  "$ref": "#/definitions/LicenseTrendCollection"
+                }
+              },
+              "204": {
+                "description": "No data"
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/entitlements/{entitlementId}/resourceThresholds": {
+          "get": {
+            "tags": [
+              "Agent limits"
+            ],
+            "operationId": "ListAgentCreditLimits",
+            "summary": "List agent credit limits",
+            "description": "Lists the monthly Copilot Credits limits set on individual Copilot Studio agents, with current consumption, percentage used, notification threshold and whether the agent stops when over the limit.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Agent limits",
+                "schema": {
+                  "$ref": "#/definitions/AgentLimitCollection"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/environments/{environmentId}/entitlements/{entitlementId}/resources/{resourceId}/threshold": {
+          "put": {
+            "tags": [
+              "Agent limits"
+            ],
+            "operationId": "SetAgentCreditLimit",
+            "summary": "Set agent credit limit",
+            "description": "Creates or updates the monthly Copilot Credits limit of one Copilot Studio agent, its notification threshold and whether it stops when the limit is reached. Setting 'Stop agent' to true disables the agent.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EnvironmentId"
+              },
+              {
+                "$ref": "#/parameters/EntitlementId"
+              },
+              {
+                "$ref": "#/parameters/ResourceIdInEnvironment"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              },
+              {
+                "name": "body",
+                "in": "body",
+                "required": true,
+                "schema": {
+                  "$ref": "#/definitions/AgentLimitRequest"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Agent limit",
+                "schema": {
+                  "$ref": "#/definitions/AgentLimit"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/licensing/environments/{environmentId}/entitlements": {
+          "get": {
+            "tags": [
+              "Capacity"
+            ],
+            "operationId": "GetEnvironmentCreditEntitlements",
+            "summary": "Get environment entitlements",
+            "description": "Returns the capacity and pay-as-you-go entitlements of one environment (allocated, consumed and available quantities, overage status and enforcement rules), including Copilot Credits.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "$ref": "#/parameters/EnvironmentId"
+              },
+              {
+                "name": "$filter",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Filter query",
+                "description": "OData filter expression.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Environment entitlements",
+                "schema": {
+                  "$ref": "#/definitions/EnvironmentEntitlementCollection"
+                }
+              },
+              "204": {
+                "description": "No entitlements"
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        },
+        "/{connectionId}/environmentmanagement/environments": {
+          "get": {
+            "tags": [
+              "Environments"
+            ],
+            "operationId": "ListEnvironments",
+            "summary": "List environments",
+            "description": "Lists the Power Platform environments available to the signed-in user, with ID, display name, type and region.",
+            "parameters": [
+              {
+                "name": "connectionId",
+                "in": "path",
+                "required": true,
+                "x-ms-visibility": "internal",
+                "type": "string"
+              },
+              {
+                "name": "$filter",
+                "in": "query",
+                "required": false,
+                "type": "string",
+                "x-ms-summary": "Filter query",
+                "description": "OData filter on dataverseId, type, geo, state, environmentGroupId or domainName.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "name": "$top",
+                "in": "query",
+                "required": false,
+                "type": "integer",
+                "format": "int32",
+                "x-ms-summary": "Top count",
+                "description": "Maximum number of environments to return.",
+                "x-ms-visibility": "advanced"
+              },
+              {
+                "$ref": "#/parameters/ApiVersion"
+              }
+            ],
+            "x-ms-pageable": {
+              "nextLinkName": "@odata.nextlink"
+            },
+            "responses": {
+              "200": {
+                "description": "Environments",
+                "schema": {
+                  "$ref": "#/definitions/EnvironmentCollection"
+                }
+              },
+              "default": {
+                "description": "Error"
+              }
+            }
+          }
+        }
+      },
+      "parameters": {
+        "ApiVersion": {
+          "name": "api-version",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "default": "2024-10-01",
+          "x-ms-summary": "API version",
+          "description": "Power Platform API version.",
+          "x-ms-visibility": "internal"
+        },
+        "EntitlementId": {
+          "name": "entitlementId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "default": "MCSMessages",
+          "x-ms-summary": "Entitlement",
+          "description": "MCSMessages is the Copilot Credits entitlement used by Copilot Studio.",
+          "x-ms-visibility": "internal"
+        },
+        "EnvironmentId": {
+          "name": "environmentId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Environment",
+          "description": "ID of the Power Platform environment.",
+          "x-ms-dynamic-values": {
+            "operationId": "ListEnvironments",
+            "value-collection": "value",
+            "value-path": "id",
+            "value-title": "displayName"
+          }
+        },
+        "ResourceId": {
+          "name": "resourceId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Agent ID",
+          "description": "ID of the Copilot Studio agent (agentId in the consumption results).",
+          "x-ms-dynamic-values": {
+            "operationId": "ListAgentCreditConsumption",
+            "parameters": {
+              "groupBy": "agent"
+            },
+            "value-collection": "value",
+            "value-path": "agentId",
+            "value-title": "agentName"
+          }
+        },
+        "ResourceIdInEnvironment": {
+          "name": "resourceId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "Agent ID",
+          "description": "ID of the Copilot Studio agent in the selected environment.",
+          "x-ms-dynamic-values": {
+            "operationId": "ListEnvironmentAgentCreditConsumption",
+            "parameters": {
+              "environmentId": {
+                "parameter": "environmentId"
+              },
+              "groupBy": "agent"
+            },
+            "value-collection": "value",
+            "value-path": "agentId",
+            "value-title": "agentName"
+          }
+        },
+        "UserId": {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "x-ms-summary": "User ID",
+          "description": "Microsoft Entra object ID of the user."
+        },
+        "FromDate": {
+          "name": "fromDate",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "x-ms-summary": "From date",
+          "description": "First day of the range (yyyy-MM-dd, inclusive). Defaults to the first day of the month of 'To date'.",
+          "x-ms-visibility": "important"
+        },
+        "ToDate": {
+          "name": "toDate",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "x-ms-summary": "To date",
+          "description": "Last day of the range (yyyy-MM-dd, inclusive). Defaults to yesterday (UTC), the latest complete day.",
+          "x-ms-visibility": "important"
+        },
+        "GroupBy": {
+          "name": "groupBy",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "enum": [
+            "none",
+            "agent",
+            "agentAndFeature",
+            "agentAndChannel",
+            "agentAndModel",
+            "environment",
+            "user",
+            "feature",
+            "channel",
+            "llmModel",
+            "tool",
+            "day"
+          ],
+          "x-ms-summary": "Group by",
+          "description": "Sums credits per group. none returns the detailed rows. agent gives one total per agent.",
+          "x-ms-visibility": "important"
+        },
+        "Top": {
+          "name": "top",
+          "in": "query",
+          "required": false,
+          "type": "integer",
+          "format": "int32",
+          "x-ms-summary": "Top N",
+          "description": "Returns only the N rows or groups with the most billed credits.",
+          "x-ms-visibility": "important"
+        },
+        "PricePerCredit": {
+          "name": "pricePerCredit",
+          "in": "query",
+          "required": false,
+          "type": "number",
+          "format": "double",
+          "x-ms-summary": "Price per credit",
+          "description": "Price of one Copilot Credit in your currency (your contract price). When set, estimatedCost = billed credits x price.",
+          "x-ms-visibility": "advanced"
+        },
+        "SplitByDay": {
+          "name": "splitByDay",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "x-ms-summary": "Query one day at a time",
+          "description": "Queries each day separately (max 92 days) so every row is attributed to its day in reportDate. Slower on long ranges.",
+          "x-ms-visibility": "advanced"
+        },
+        "IncludeEnvironmentNames": {
+          "name": "includeEnvironmentNames",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "x-ms-summary": "Include environment names",
+          "description": "Adds environment display names to the rows (one extra call). Defaults to true.",
+          "x-ms-visibility": "advanced"
+        },
+        "FetchAllPages": {
+          "name": "fetchAllPages",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "x-ms-summary": "Fetch all pages",
+          "description": "Follows continuation tokens and returns every page in one response. Defaults to true.",
+          "x-ms-visibility": "advanced"
+        },
+        "PageSizeOptional": {
+          "name": "pageSize",
+          "in": "query",
+          "required": false,
+          "type": "integer",
+          "format": "int32",
+          "x-ms-summary": "Page size",
+          "description": "Page size sent to the service.",
+          "x-ms-visibility": "advanced"
+        },
+        "IncludeFields": {
+          "name": "includeFields",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "x-ms-summary": "Include fields",
+          "description": "Extra fields requested from the service. Defaults to users,tags,asOfDate.",
+          "x-ms-visibility": "advanced"
+        },
+        "SearchRequest": {
+          "name": "searchRequest",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "x-ms-summary": "Search",
+          "description": "Search text passed to the service to filter the results.",
+          "x-ms-visibility": "advanced"
+        },
+        "ContinuationToken": {
+          "name": "continuationToken",
+          "in": "query",
+          "required": false,
+          "type": "string",
+          "x-ms-summary": "Continuation token",
+          "description": "Token returned by a previous call when not all pages were read.",
+          "x-ms-visibility": "advanced"
+        }
+      },
+      "definitions": {
+        "ConsumptionRow": {
+          "type": "object",
+          "description": "One consumption row (or one group when Group by is set).",
+          "properties": {
+            "date": {
+              "type": "string",
+              "title": "Date",
+              "description": "Day of the row (yyyy-MM-dd): reportDate when querying day by day, otherwise the date part of asOfDate."
+            },
+            "reportDate": {
+              "type": "string",
+              "title": "Report date",
+              "description": "Queried day, when 'Query one day at a time' is on."
+            },
+            "asOfDate": {
+              "type": "string",
+              "title": "As of date",
+              "description": "As-of date reported by the service."
+            },
+            "agentId": {
+              "type": "string",
+              "title": "Agent ID",
+              "description": "ID of the Copilot Studio agent (resourceId)."
+            },
+            "agentName": {
+              "type": "string",
+              "title": "Agent name",
+              "description": "Display name of the agent."
+            },
+            "environmentId": {
+              "type": "string",
+              "title": "Environment ID",
+              "description": "ID of the environment of the agent."
+            },
+            "environmentName": {
+              "type": "string",
+              "title": "Environment name",
+              "description": "Display name of the environment."
+            },
+            "environmentScenarioName": {
+              "type": "string",
+              "title": "Environment scenario",
+              "description": "Scenario name of the environment, when set."
+            },
+            "userId": {
+              "type": "string",
+              "title": "User ID",
+              "description": "Microsoft Entra object ID of the user (user consumption rows)."
+            },
+            "billedCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Billed credits",
+              "description": "Billed Copilot Credits."
+            },
+            "nonBilledCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Non-billed credits",
+              "description": "Non-billable Copilot Credits."
+            },
+            "estimatedCost": {
+              "type": "number",
+              "format": "double",
+              "title": "Estimated cost",
+              "description": "Billed credits x price per credit, when a price is supplied."
+            },
+            "users": {
+              "type": "number",
+              "format": "double",
+              "title": "Users",
+              "description": "Number of users reported for the row (detailed rows only)."
+            },
+            "channel": {
+              "type": "string",
+              "title": "Channel",
+              "description": "Channel where users interacted with the agent."
+            },
+            "feature": {
+              "type": "string",
+              "title": "Feature",
+              "description": "Feature that generated the charge, for example generative answers or agent flows."
+            },
+            "tool": {
+              "type": "string",
+              "title": "Tool used",
+              "description": "Tool invoked by the agent."
+            },
+            "llmModel": {
+              "type": "string",
+              "title": "LLM model",
+              "description": "Language model used."
+            },
+            "knowledgeSources": {
+              "type": "string",
+              "title": "Knowledge sources",
+              "description": "Knowledge sources used."
+            },
+            "product": {
+              "type": "string",
+              "title": "Product",
+              "description": "Product name reported by the service."
+            },
+            "unit": {
+              "type": "string",
+              "title": "Unit",
+              "description": "Unit reported by the service."
+            },
+            "rowCount": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Row count",
+              "description": "Number of detailed rows summed into this group."
+            },
+            "metadata": {
+              "type": "object",
+              "title": "Raw metadata",
+              "description": "Metadata as returned by the service (detailed rows only).",
+              "x-ms-visibility": "advanced"
+            }
+          }
+        },
+        "ConsumptionResponse": {
+          "type": "object",
+          "properties": {
+            "fromDate": {
+              "type": "string",
+              "title": "From date",
+              "description": "First day queried."
+            },
+            "toDate": {
+              "type": "string",
+              "title": "To date",
+              "description": "Last day queried."
+            },
+            "groupBy": {
+              "type": "string",
+              "title": "Group by",
+              "description": "Grouping applied."
+            },
+            "pricePerCredit": {
+              "type": "number",
+              "format": "double",
+              "title": "Price per credit",
+              "description": "Price used for estimatedCost."
+            },
+            "totalBilledCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Total billed credits",
+              "description": "Billed credits of all rows, before Top N."
+            },
+            "totalNonBilledCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Total non-billed credits",
+              "description": "Non-billed credits of all rows, before Top N."
+            },
+            "totalEstimatedCost": {
+              "type": "number",
+              "format": "double",
+              "title": "Total estimated cost",
+              "description": "Total billed credits x price per credit, when a price is supplied."
+            },
+            "agentCount": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Agent count",
+              "description": "Distinct agents in the results."
+            },
+            "userCount": {
+              "type": "integer",
+              "format": "int32",
+              "title": "User count",
+              "description": "Distinct users in the results."
+            },
+            "sourceRowCount": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Source row count",
+              "description": "Detailed rows returned by the service."
+            },
+            "rowCount": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Row count",
+              "description": "Rows in value."
+            },
+            "pagesRead": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Pages read",
+              "description": "Service pages read."
+            },
+            "isComplete": {
+              "type": "boolean",
+              "title": "Is complete",
+              "description": "False when not every page could be read; call again with the continuation token."
+            },
+            "continuationToken": {
+              "type": "string",
+              "title": "Continuation token",
+              "description": "Token for the next page when isComplete is false."
+            },
+            "resumeFromDate": {
+              "type": "string",
+              "title": "Resume from date",
+              "description": "With 'Query one day at a time', first day not read when isComplete is false: call again from this date."
+            },
+            "value": {
+              "type": "array",
+              "title": "Rows",
+              "description": "Consumption rows, highest billed credits first.",
+              "items": {
+                "$ref": "#/definitions/ConsumptionRow"
+              }
+            }
+          }
+        },
+        "CreditCapacity": {
+          "type": "object",
+          "properties": {
+            "entitlementId": {
+              "type": "string",
+              "title": "Entitlement",
+              "description": "Entitlement ID."
+            },
+            "entitledCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Entitled credits",
+              "description": "Prepaid Copilot Credits capacity for the month."
+            },
+            "allocatedCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Allocated credits",
+              "description": "Credits allocated to environments."
+            },
+            "consumedCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Consumed credits",
+              "description": "Credits consumed from capacity."
+            },
+            "availableCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Available credits",
+              "description": "Credits still available."
+            },
+            "payGoConsumedCredits": {
+              "type": "number",
+              "format": "double",
+              "title": "Pay-as-you-go credits",
+              "description": "Credits consumed through pay-as-you-go."
+            },
+            "capacityStatus": {
+              "type": "string",
+              "title": "Capacity status",
+              "description": "WithinCapacity, Overage or CoveredOverage."
+            },
+            "consumptionType": {
+              "type": "string",
+              "title": "Consumption type",
+              "description": "For example MonthToDate."
+            },
+            "dataUpdatedOn": {
+              "type": "string",
+              "title": "Data updated on",
+              "description": "Latest completed usage date of the consumption data."
+            },
+            "productCategories": {
+              "type": "array",
+              "title": "Product categories",
+              "description": "Product categories of the entitlement.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "entitlement": {
+              "type": "object",
+              "title": "Entitlement details",
+              "description": "Entitlement as returned by the service.",
+              "x-ms-visibility": "advanced"
+            }
+          }
+        },
+        "LicenseTrendCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "Trend points",
+              "description": "License trend points.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "title": "Date",
+                    "description": "Date of the trend point."
+                  },
+                  "licenseModelType": {
+                    "type": "string",
+                    "title": "License model",
+                    "description": "Usl, Capacity, PayGo or TenantLicense."
+                  },
+                  "licenses": {
+                    "type": "array",
+                    "title": "Licenses",
+                    "description": "Licenses at that date.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "productName": {
+                          "type": "string",
+                          "title": "Product",
+                          "description": "Product name."
+                        },
+                        "skuId": {
+                          "type": "string",
+                          "title": "SKU ID",
+                          "description": "SKU identifier."
+                        },
+                        "licenseId": {
+                          "type": "string",
+                          "title": "License ID",
+                          "description": "License identifier."
+                        },
+                        "licenseQuantity": {
+                          "type": "integer",
+                          "format": "int32",
+                          "title": "Quantity",
+                          "description": "Number of licenses."
+                        },
+                        "entitled": {
+                          "type": "number",
+                          "format": "double",
+                          "title": "Entitled",
+                          "description": "Entitled quantity."
+                        },
+                        "licenseStatus": {
+                          "type": "string",
+                          "title": "Status",
+                          "description": "License status."
+                        },
+                        "licenseTier": {
+                          "type": "string",
+                          "title": "Tier",
+                          "description": "Paid, Trial or Internal."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "continuationtoken": {
+              "type": "string",
+              "title": "Continuation token",
+              "description": "Token for the next page."
+            }
+          }
+        },
+        "AgentLimit": {
+          "type": "object",
+          "properties": {
+            "resourceId": {
+              "type": "string",
+              "title": "Agent ID",
+              "description": "ID of the agent."
+            },
+            "environmentId": {
+              "type": "string",
+              "title": "Environment ID",
+              "description": "Environment of the agent."
+            },
+            "entitlementId": {
+              "type": "string",
+              "title": "Entitlement",
+              "description": "Entitlement ID."
+            },
+            "limit": {
+              "type": "number",
+              "format": "double",
+              "title": "Monthly limit",
+              "description": "Monthly Copilot Credits limit of the agent."
+            },
+            "resourceConsumption": {
+              "type": "number",
+              "format": "double",
+              "title": "Current consumption",
+              "description": "Credits consumed by the agent this month."
+            },
+            "percentUsed": {
+              "type": "number",
+              "format": "double",
+              "title": "Percent used",
+              "description": "Current consumption as a percentage of the limit (added by the connector)."
+            },
+            "isOverLimit": {
+              "type": "boolean",
+              "title": "Is over limit",
+              "description": "True when consumption has reached the limit (added by the connector)."
+            },
+            "notificationThreshold": {
+              "type": "integer",
+              "format": "int32",
+              "title": "Notification threshold (%)",
+              "description": "Percentage of the limit that triggers a notification."
+            },
+            "notifyIfOverCapacity": {
+              "type": "boolean",
+              "title": "Notify",
+              "description": "Whether a notification is sent at the threshold."
+            },
+            "stopIfOverCapacity": {
+              "type": "boolean",
+              "title": "Stop when over limit",
+              "description": "Whether the agent stops consuming when it exceeds the limit."
+            },
+            "stopResource": {
+              "type": "boolean",
+              "title": "Agent stopped",
+              "description": "True when the agent was stopped explicitly (disabled)."
+            },
+            "createdOn": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Created on",
+              "description": "When the limit was first configured."
+            }
+          }
+        },
+        "AgentLimitCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "Agent limits",
+              "description": "Configured agent limits.",
+              "items": {
+                "$ref": "#/definitions/AgentLimit"
+              }
+            }
+          }
+        },
+        "AgentLimitRequest": {
+          "type": "object",
+          "required": [
+            "limit"
+          ],
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "format": "int32",
+              "x-ms-summary": "Monthly limit (credits)",
+              "description": "Monthly Copilot Credits limit of the agent.",
+              "x-ms-visibility": "important"
+            },
+            "notificationThreshold": {
+              "type": "integer",
+              "format": "int32",
+              "x-ms-summary": "Notification threshold (%)",
+              "description": "Percentage of the limit that triggers a notification, for example 80.",
+              "x-ms-visibility": "important"
+            },
+            "notifyIfOverCapacity": {
+              "type": "boolean",
+              "x-ms-summary": "Notify at threshold",
+              "description": "Send a notification when consumption reaches the threshold."
+            },
+            "stopIfOverCapacity": {
+              "type": "boolean",
+              "x-ms-summary": "Stop when over limit",
+              "description": "Stop the agent from consuming credits when it exceeds the limit."
+            },
+            "stopResource": {
+              "type": "boolean",
+              "x-ms-summary": "Stop agent now",
+              "description": "True disables the agent immediately; false re-enables it."
+            }
+          }
+        },
+        "EnvironmentEntitlementCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "Entitlements",
+              "description": "Entitlements of the environment.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entitlementId": {
+                    "type": "string",
+                    "title": "Entitlement",
+                    "description": "Entitlement ID, for example MCSMessages."
+                  },
+                  "environmentId": {
+                    "type": "string",
+                    "title": "Environment ID",
+                    "description": "Environment ID."
+                  },
+                  "environmentName": {
+                    "type": "string",
+                    "title": "Environment name",
+                    "description": "Environment name."
+                  },
+                  "environmentType": {
+                    "type": "string",
+                    "title": "Environment type",
+                    "description": "Environment type."
+                  },
+                  "allocatedCredits": {
+                    "type": "number",
+                    "format": "double",
+                    "title": "Allocated",
+                    "description": "Allocated quantity (added by the connector)."
+                  },
+                  "consumedCredits": {
+                    "type": "number",
+                    "format": "double",
+                    "title": "Consumed",
+                    "description": "Consumed quantity (added by the connector)."
+                  },
+                  "availableCredits": {
+                    "type": "number",
+                    "format": "double",
+                    "title": "Available",
+                    "description": "Available quantity (added by the connector)."
+                  },
+                  "payGoConsumedCredits": {
+                    "type": "number",
+                    "format": "double",
+                    "title": "Pay-as-you-go consumed",
+                    "description": "Pay-as-you-go consumption (added by the connector)."
+                  },
+                  "capacityStatus": {
+                    "type": "string",
+                    "title": "Capacity status",
+                    "description": "Overage status (added by the connector)."
+                  },
+                  "entitlement": {
+                    "type": "object",
+                    "title": "Entitlement details",
+                    "description": "Entitlement as returned by the service.",
+                    "x-ms-visibility": "advanced"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "EnvironmentCollection": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "title": "Environments",
+              "description": "Environments.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "title": "Environment ID",
+                    "description": "Environment ID."
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "title": "Environment name",
+                    "description": "Display name."
+                  },
+                  "type": {
+                    "type": "string",
+                    "title": "Type",
+                    "description": "Environment type (SKU)."
+                  },
+                  "state": {
+                    "type": "string",
+                    "title": "State",
+                    "description": "Environment state."
+                  },
+                  "geo": {
+                    "type": "string",
+                    "title": "Geo",
+                    "description": "Geographical region."
+                  },
+                  "azureRegion": {
+                    "type": "string",
+                    "title": "Azure region",
+                    "description": "Azure region."
+                  },
+                  "url": {
+                    "type": "string",
+                    "title": "Dataverse URL",
+                    "description": "URL of the Dataverse database."
+                  },
+                  "scenarioName": {
+                    "type": "string",
+                    "title": "Scenario",
+                    "description": "Scenario name of the environment."
+                  },
+                  "environmentGroupId": {
+                    "type": "string",
+                    "title": "Environment group ID",
+                    "description": "Environment group."
+                  },
+                  "createdDateTime": {
+                    "type": "string",
+                    "format": "date-time",
+                    "title": "Created",
+                    "description": "Creation date."
+                  }
+                }
+              }
+            },
+            "@odata.nextlink": {
+              "type": "string",
+              "title": "Next link",
+              "description": "URL of the next page.",
+              "x-ms-visibility": "advanced"
+            }
+          }
+        }
+      },
+      "securityDefinitions": {
+        "oauth2-auth": {
+          "type": "oauth2",
+          "flow": "accessCode",
+          "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+          "scopes": {},
+          "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize"
+        }
+      },
+      "security": [
+        {
+          "oauth2-auth": []
+        }
+      ],
+      "x-ms-connector-metadata": [
+        {
+          "propertyName": "Website",
+          "propertyValue": "https://learn.microsoft.com/en-us/rest/api/power-platform/licensing/entitlement-insight"
+        },
+        {
+          "propertyName": "Privacy policy",
+          "propertyValue": "https://privacy.microsoft.com/privacystatement"
+        },
+        {
+          "propertyName": "Categories",
+          "propertyValue": "IT Operations;Productivity"
+        }
+      ]
+    },
+    "runtimeUrls": [
+      "https://90d9d59b8118e2c897261899715d44.43.environment.api.powerplatform.com/connectors/runtime/invoke/scalegroups/europe002/shards/05/apis/zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320/connections/"
+    ],
+    "primaryRuntimeUrl": "https://90d9d59b8118e2c897261899715d44.43.environment.api.powerplatform.com/connectors/runtime/invoke/scalegroups/europe002/shards/05/apis/zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320/connections/",
+    "doNotUseApiHubNetRuntimeUrl": "https://90d9d59b-8118-e2c8-9726-1899715d4443.05.custom.europe002.azure-apihub.net/apim/zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320",
+    "metadata": {
+      "source": "powerapps-user-defined",
+      "brandColor": "#007ee5",
+      "contact": {},
+      "license": {},
+      "publisherUrl": null,
+      "serviceUrl": null,
+      "documentationUrl": null,
+      "environmentName": "90d9d59b-8118-e2c8-9726-1899715d4443",
+      "xrmConnectorId": "ff1c0cc0-22c6-4659-b7cd-ae04188a96eb",
+      "almMode": "Solution",
+      "parameters": {},
+      "useNewApimVersion": "True",
+      "createdBy": "{\"id\":\"4c4a9447-400a-4b11-abf9-30cfe74a84c6\",\"displayName\":\"MOD Administrator\",\"email\":\"admin@diax43534993.onmicrosoft.com\",\"type\":\"User\",\"userType\":\"NotSpecified\",\"tenantId\":\"cd24ae47-6aca-4419-973f-ea765b169335\",\"userPrincipalName\":\"admin@diax43534993.onmicrosoft.com\"}",
+      "modifiedBy": "{\"id\":\"4c4a9447-400a-4b11-abf9-30cfe74a84c6\",\"displayName\":\"MOD Administrator\",\"email\":\"admin@diax43534993.onmicrosoft.com\",\"type\":\"User\",\"userType\":\"NotSpecified\",\"tenantId\":\"cd24ae47-6aca-4419-973f-ea765b169335\",\"userPrincipalName\":\"admin@diax43534993.onmicrosoft.com\"}",
+      "allowSharing": false,
+      "rateLimit": 0
+    },
+    "capabilities": [],
+    "description": "Power Platform API licensing endpoints for Copilot Credits: tenant capacity and per-agent consumption (billed and non-billed credits by environment, channel, feature, tool, model and knowledge source), per-user consumption and per-agent credit limits.",
+    "apiDefinitions": {
+      "originalSwaggerUrl": "https://eur002002neuext.blob.core.windows.net/api-swagger-files/europe-002/zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320.json_original?skoid=a18ce847-5bbf-4179-b6dd-1aa1cb321bd0&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2026-11-20T20%3A28%3A35Z&ske=2026-11-21T20%3A28%3A35Z&sks=b&skv=2025-01-05&sv=2025-01-05&spr=https&se=2026-11-21T16%3A12%3A41Z&sr=b&sp=r&sig=p3H7l8yO7leO0zfrL8VpstG5luwm%2FWemfXY83pMbDEs%3D",
+      "modifiedSwaggerUrl": "https://eur002002neuext.blob.core.windows.net/api-swagger-files/europe-002/zama-5fcopilotstudiocreditconsumption-5fb043a1f4407b1320.json?skoid=a18ce847-5bbf-4179-b6dd-1aa1cb321bd0&sktid=33e01921-4d64-4f8c-a055-5bdaffd5e33d&skt=2026-11-20T20%3A28%3A35Z&ske=2026-11-21T20%3A28%3A35Z&sks=b&skv=2025-01-05&sv=2025-01-05&spr=https&se=2026-11-21T16%3A12%3A41Z&sr=b&sp=r&sig=rAm5KZWadn33fWYX%2BIrno3O%2Fe%2F1Gji1GvBfXm2xUtwY%3D"
+    },
+    "policyTemplateInstances": [],
+    "backendService": {
+      "serviceUrl": "https://api.powerplatform.com/"
+    },
+    "createdBy": {
+      "id": "4c4a9447-400a-4b11-abf9-30cfe74a84c6",
+      "displayName": "MOD Administrator",
+      "email": "admin@diax43534993.onmicrosoft.com",
+      "type": "User",
+      "userType": "NotSpecified",
+      "tenantId": "cd24ae47-6aca-4419-973f-ea765b169335",
+      "userPrincipalName": "admin@diax43534993.onmicrosoft.com"
+    },
+    "modifiedBy": {
+      "id": "4c4a9447-400a-4b11-abf9-30cfe74a84c6",
+      "displayName": "MOD Administrator",
+      "email": "admin@diax43534993.onmicrosoft.com",
+      "type": "User",
+      "userType": "NotSpecified",
+      "tenantId": "cd24ae47-6aca-4419-973f-ea765b169335",
+      "userPrincipalName": "admin@diax43534993.onmicrosoft.com"
+    },
+    "createdTime": "2026-11-21T13:13:33.4887278Z",
+    "changedTime": "2026-11-21T14:38:48.1190816Z",
+    "environment": {
+      "id": "/providers/Microsoft.PowerApps/environments/90d9d59b-8118-e2c8-9726-1899715d4443",
+      "name": "90d9d59b-8118-e2c8-9726-1899715d4443"
+    },
+    "tier": "Standard",
+    "publisher": "MOD Administrator",
+    "almMode": "Solution",
+    "parameters": {},
+    "rateLimit": 0,
+    "apiVersion": "None"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "paths": {
+    "/copilotstudio/licensing/reports/FeatureDetailsPerResource": {
+      "post": {
+        "operationId": "StartAgentUsageReport",
+        "summary": "Start agent usage report (preview)",
+        "description": "Starts the tenant's FeatureDetailsPerResource licensing report for complete UTC days.",
+        "parameters": [
+          { "$ref": "#/parameters/ApiVersion" },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["startDate", "endDate", "granularity"],
+              "properties": {
+                "startDate": { "type": "string" },
+                "endDate": { "type": "string" },
+                "granularity": { "type": "string", "enum": ["Summary"] }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "The report operation has been accepted.",
+            "schema": { "$ref": "#/definitions/AgentUsageReportOperation" }
+          },
+          "429": {
+            "description": "Report generation is throttled.",
+            "schema": { "$ref": "#/definitions/AgentUsageReportOperation" }
+          },
+          "default": { "description": "Error" }
+        }
+      }
+    },
+    "/copilotstudio/licensing/reports/FeatureDetailsPerResource/operations/{operationId}": {
+      "get": {
+        "operationId": "CheckAgentUsageReport",
+        "summary": "Check agent usage report (preview)",
+        "description": "Returns the generation status and file name when ready.",
+        "parameters": [
+          { "$ref": "#/parameters/ApiVersion" },
+          { "name": "operationId", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report operation status.",
+            "schema": { "$ref": "#/definitions/AgentUsageReportOperation" }
+          },
+          "429": {
+            "description": "Report status is throttled.",
+            "schema": { "$ref": "#/definitions/AgentUsageReportOperation" }
+          },
+          "default": { "description": "Error" }
+        }
+      }
+    },
+    "/copilotstudio/licensing/reports/FeatureDetailsPerResource/files/{fileName}": {
+      "get": {
+        "operationId": "DownloadAgentUsageReport",
+        "summary": "Download agent usage report (preview)",
+        "description": "Returns the authorized report as UTF-8 CSV text in a JSON response.",
+        "parameters": [
+          { "$ref": "#/parameters/ApiVersion" },
+          { "name": "fileName", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report CSV.",
+            "schema": {
+              "type": "object",
+              "required": ["csv"],
+              "properties": { "csv": { "type": "string" } }
+            }
+          },
+          "default": { "description": "Error" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AgentUsageReportOperation": {
+      "type": "object",
+      "properties": {
+        "operationId": { "type": "string" },
+        "status": { "type": "string" },
+        "fileName": { "type": "string" },
+        "retryAfterSeconds": { "type": "integer", "format": "int32" }
+      }
+    }
+  }
+}
