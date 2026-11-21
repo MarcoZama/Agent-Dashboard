@@ -72,7 +72,9 @@ Per una **GitHub Release**, pubblica un tag `vX.Y.Z` su un commit già presente 
 
 Il packaging usa PAC CLI su un runner Windows di GitHub. Non accede a Dataverse, non richiede credenziali Power Platform o sandbox e non pubblica l'app. Lo [script di packaging](./scripts/Pack-CodeAppSolution.ps1) rigenera l'elenco degli asset dalla build corrente; i metadati conservano publisher, identità dell'app e dipendenze dai custom connector della soluzione gestita originale.
 
-Per un collaudo d'importazione, installa prima le due soluzioni dei connettori nell'ambiente Dataverse di destinazione e associa le connessioni di destinazione. Riserva ai responsabili delle release la creazione e la modifica dei tag `v*` e verifica l'import prima di distribuire il pacchetto.
+Prima di distribuire una release, installa le due soluzioni dei connettori nell'ambiente Dataverse di test, importa lo ZIP gestito e associa le connessioni di destinazione. Apri l'app importata dall'elenco delle app dell'ambiente e verifica che si avvii e carichi i dati. Un import riuscito non basta a verificare l'avvio. Riserva ai responsabili delle release la creazione e la modifica dei tag `v*`.
+
+Non distribuire la `v1.0.0`: nel pacchetto la configurazione precede `index.html` e può causare `AppBlobNotFound` dopo un import riuscito. La verifica del pacchetto ora richiede che `index.html` sia il primo URI.
 
 ## Interpretazione dei dati e diagnostica
 

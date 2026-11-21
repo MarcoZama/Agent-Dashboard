@@ -26,6 +26,15 @@ try {
     $prefix = 'CanvasApps/{0}_CodeAppPackages/' -f $roots[0].GetAttribute('schemaName')
     if (!$zip.GetEntry("${prefix}index.html")) { throw 'The Code App entry point is missing from the solution.' }
 
+    $customizations = $zip.GetEntry('customizations.xml')
+    if (!$customizations) { throw 'Dataverse customizations.xml is missing.' }
+    $reader = [IO.StreamReader]::new($customizations.Open())
+    try { [xml]$metadata = $reader.ReadToEnd() } finally { $reader.Dispose() }
+    $firstUri = $metadata.SelectSingleNode('/ImportExportXml/CanvasApps/CanvasApp/CodeAppPackageUris/CodeAppPackageUri[1]')
+    if ($firstUri.InnerText -cne "/${prefix}index.html_ContentType_text/html") {
+        throw 'index.html must be the first CodeAppPackageUri for Power Apps to start after import.'
+    }
+
     $files = @(Get-ChildItem -LiteralPath $dist -File -Force -Recurse)
     $assets = @($zip.Entries | Where-Object {
         $_.FullName.StartsWith($prefix, [StringComparison]::Ordinal) -and $_.Name -and
