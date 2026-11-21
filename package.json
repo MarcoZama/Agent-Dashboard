@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "repair:connectors": "node scripts/repair-connector-clients.mjs",
-    "test": "node --experimental-strip-types --test tests\\consumption.test.ts",
+    "test": "node --experimental-strip-types --test tests/consumption.test.ts",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
