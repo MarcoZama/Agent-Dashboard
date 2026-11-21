@@ -15,18 +15,13 @@ jobs:
       github.event.workflow_run.conclusion == 'success' &&
       (github.event.workflow_run.event == 'pull_request' || github.event.workflow_run.event == 'push') &&
       github.event.workflow_run.head_repository.id == github.event.repository.id
-    runs-on: ubuntu-latest
-    timeout-minutes: 35
-    environment: power-platform-packaging
-    concurrency:
-      group: agents-dashboard-packaging-sandbox
-      queue: max
+    runs-on: windows-latest
+    timeout-minutes: 15
     defaults:
       run:
         shell: pwsh
     env:
       PACKAGE_ROOT: ${{ github.workspace }}/.ci-package
-      SOLUTION_NAME: AgentsDashboard
     outputs:
       release_tag: ${{ steps.release.outputs.tag }}
       release_commit: ${{ steps.release.outputs.commit }}
@@ -64,22 +59,15 @@ jobs:
           git --no-pager merge-base --is-ancestor $commit refs/remotes/origin/main
           if ($LASTEXITCODE -ne 0) { throw 'The tagged commit must be on main.' }
           Add-Content -LiteralPath $env:GITHUB_OUTPUT -Value @("tag=$tag", "commit=$commit", "version=$version")
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: '24'
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
         with:
           dotnet-version: '10.0.x'
-      - name: Install Power Apps and Power Platform CLIs
+      - name: Install Power Platform CLI
         run: |
           $toolPath = Join-Path $env:RUNNER_TEMP 'pac-tools'
           dotnet tool install Microsoft.PowerApps.CLI.Tool --version 2.12.2 --tool-path $toolPath
           if ($LASTEXITCODE -ne 0) { throw 'Power Platform CLI installation failed.' }
           Add-Content -LiteralPath $env:GITHUB_PATH -Value $toolPath
-          $paPath = Join-Path $env:RUNNER_TEMP 'pa-tools'
-          npm install --prefix $paPath --no-save --no-audit --no-fund '@microsoft/power-apps-cli@1.4.2'
-          if ($LASTEXITCODE -ne 0) { throw 'Power Apps CLI installation failed.' }
-          Add-Content -LiteralPath $env:GITHUB_PATH -Value (Join-Path $paPath 'node_modules/.bin')
       - name: Download build from the successful upstream run
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -87,79 +75,18 @@ jobs:
           path: ${{ env.PACKAGE_ROOT }}/dist
           github-token: ${{ github.token }}
           run-id: ${{ github.event.workflow_run.id }}
-      - name: Stage the build with trusted sandbox bindings
+      - name: Pack and verify the managed solution offline
         env:
-          PP_CI_POWER_CONFIG: ${{ vars.PP_CI_POWER_CONFIG }}
-          PP_CI_ENVIRONMENT_ID: ${{ vars.PP_CI_ENVIRONMENT_ID }}
-          PP_CI_SOLUTION_ID: ${{ vars.PP_CI_SOLUTION_ID }}
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
-          $guid = '^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$'
-          $currentTestEnvironment = '90d9d59b-8118-e2c8-9726-1899715d4443'
-          if ($env:PP_CI_ENVIRONMENT_ID -notmatch $guid -or $env:PP_CI_SOLUTION_ID -notmatch $guid -or
-              $env:PP_CI_ENVIRONMENT_ID -eq $currentTestEnvironment) {
-            throw 'Configure a dedicated sandbox environment and solution in power-platform-packaging.'
-          }
-          if ([string]::IsNullOrWhiteSpace($env:PP_CI_POWER_CONFIG)) {
-            throw 'Set PP_CI_POWER_CONFIG to the sanitized power.config.json for the prepublished sandbox app.'
-          }
-          $config = ConvertFrom-Json -InputObject $env:PP_CI_POWER_CONFIG -AsHashtable
-          if ($config.appId -notmatch $guid -or $config.environmentId -ne $env:PP_CI_ENVIRONMENT_ID -or
-              $config.buildPath -ne 'dist' -or $config.buildEntryPoint -ne 'index.html' -or
-              $config.connectionReferences.Count -ne 4) {
-            throw 'Expected the sandbox app ID, environment ID, dist/index.html and four connection bindings.'
-          }
-          $dist = Join-Path $env:PACKAGE_ROOT 'dist'
-          if (!(Test-Path -LiteralPath (Join-Path $dist 'index.html') -PathType Leaf)) {
-            throw 'The build is missing dist/index.html.'
-          }
-          $entries = @(Get-ChildItem -LiteralPath $dist -Recurse -Force)
-          if ($entries | Where-Object { $_.Name.StartsWith('.') -or ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) }) {
-            throw 'The build cannot contain hidden paths or links.'
-          }
-          $config | ConvertTo-Json -Depth 32 | Set-Content -LiteralPath (Join-Path $env:PACKAGE_ROOT 'power.config.json') -Encoding utf8NoBOM
           $version = $env:RELEASE_VERSION
           if (!$version) {
             $version = '1.0.{0}.{1}' -f [uint16]$env:GITHUB_RUN_NUMBER, [uint16]$env:GITHUB_RUN_ATTEMPT
           }
-          Add-Content -LiteralPath $env:GITHUB_ENV -Value "SOLUTION_VERSION=$version"
-      - name: Publish and export only in the packaging sandbox
-        working-directory: ${{ env.PACKAGE_ROOT }}
-        env:
-          PA_CLI_USE_SP_AUTH: 'true'
-          PA_CLI_ENVIRONMENT_ID: ${{ vars.PP_CI_ENVIRONMENT_ID }}
-          PA_CLI_SP_TENANT_ID: ${{ vars.PP_CI_TENANT_ID }}
-          PA_CLI_SP_CLIENT_ID: ${{ vars.PP_CI_CLIENT_ID }}
-          PA_CLI_SP_CLIENT_SECRET: ${{ secrets.PP_CI_CLIENT_SECRET }}
-          PP_CI_SOLUTION_ID: ${{ vars.PP_CI_SOLUTION_ID }}
-        run: |
-          if (!$env:PA_CLI_SP_TENANT_ID -or !$env:PA_CLI_SP_CLIENT_ID -or !$env:PA_CLI_SP_CLIENT_SECRET) {
-            throw 'Configure the packaging service principal in the protected GitHub environment.'
-          }
-          $result = pa solution list --search $env:SOLUTION_NAME --non-interactive --json
-          if ($LASTEXITCODE -ne 0) { throw 'Could not verify the sandbox solution.' }
-          $solutions = @(($result -join "`n" | ConvertFrom-Json).items | Where-Object {
-            $_.solutionid -eq $env:PP_CI_SOLUTION_ID -and
-            $_.uniquename -ceq $env:SOLUTION_NAME -and
-            $_.ismanaged -eq $false
-          })
-          if ($solutions.Count -ne 1) { throw 'The configured target is not the unmanaged AgentsDashboard solution in the sandbox.' }
-
-          pac auth create --name packaging --tenant $env:PA_CLI_SP_TENANT_ID --applicationId $env:PA_CLI_SP_CLIENT_ID --clientSecret $env:PA_CLI_SP_CLIENT_SECRET --environment $env:PA_CLI_ENVIRONMENT_ID
-          if ($LASTEXITCODE -ne 0) { throw 'Could not authenticate to sandbox Dataverse.' }
-          pa app push --solution-id $env:PP_CI_SOLUTION_ID --non-interactive
-          if ($LASTEXITCODE -ne 0) { throw 'Code App publish to sandbox failed.' }
-          pac solution online-version --environment $env:PA_CLI_ENVIRONMENT_ID --solution-name $env:SOLUTION_NAME --solution-version $env:SOLUTION_VERSION
-          if ($LASTEXITCODE -ne 0) { throw 'Could not update the sandbox solution version.' }
-          $zipPath = Join-Path $env:PACKAGE_ROOT 'AgentsDashboard_managed.zip'
-          pac solution export --environment $env:PA_CLI_ENVIRONMENT_ID --name $env:SOLUTION_NAME --path $zipPath --managed --async --max-async-wait-time 20
-          if ($LASTEXITCODE -ne 0) { throw 'Managed solution export failed.' }
-      - name: Verify the managed ZIP contains the upstream build
-        run: |
-          ./scripts/Test-CodeAppSolution.ps1 `
-            -SolutionZip (Join-Path $env:PACKAGE_ROOT 'AgentsDashboard_managed.zip') `
+          .\scripts\Pack-CodeAppSolution.ps1 `
             -BuildDirectory (Join-Path $env:PACKAGE_ROOT 'dist') `
-            -ExpectedVersion $env:SOLUTION_VERSION
+            -SolutionZip (Join-Path $env:PACKAGE_ROOT 'AgentsDashboard_managed.zip') `
+            -Version $version
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: AgentsDashboard-managed-${{ github.event.workflow_run.id }}-${{ github.run_attempt }}
